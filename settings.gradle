@@ -1,0 +1,1 @@
+include ':app', ':rfidmodule', ':nfcmodule', ':printmodule', ':basemodule'

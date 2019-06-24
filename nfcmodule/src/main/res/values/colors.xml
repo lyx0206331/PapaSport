@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="write">#ffffff</color>
+    <color name="breaks">#000000</color>
+    <color name="comment">#576366</color>
+    <color name="forum1">#125CCB</color>
+    <color name="forum2">#3C90F3</color>
+    <color name="forum3">#17A2B7</color>
+    <color name="forum4">#C6395F</color>
+    <color name="sufMain">#4A4A4A</color>
+    <color name="scanMain">#BFEFFF</color>
+    <color name="contents_text">#ff000000</color>
+    <color name="encode_view">#ffffffff</color>
+    <color name="possible_result_points">#c0ffbd21</color> <!-- Android standard ICS color -->
+    <color name="result_minor_text">#ffc0c0c0</color>
+    <color name="result_points">#c099cc00</color> <!-- Android standard ICS color -->
+    <color name="result_text">#ffffffff</color>
+    <color name="result_view">#b0000000</color>
+    <color name="status_text">#ffffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="viewfinder_laser">#ffcc0000</color> <!-- Android standard ICS color -->
+    <color name="viewfinder_mask">#60000000</color>
+</resources>

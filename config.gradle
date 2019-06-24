@@ -1,0 +1,32 @@
+ext {
+    //表示是作为module还是application
+    isModule = false
+    //applicationId版本好sdkVersion统一管理
+    android = [
+            compileSdkVersion           : 22,
+            buildToolsVersion           : "28.0.3",
+            applicationId               : "com.adrian.papasport",
+            minSdkVersion               : 19,
+            targetSdkVersion            : 22,
+            versionCode                 : 1,
+            versionName                 : "1.0.0"
+    ]
+
+    def AGENT_WEB_VERSION = "4.0.3-beta"
+
+    def LEAK_CANARY_VERSION = "2.0-alpha-2"
+    def TWINKLING_REFRESH_VERSION = "1.0.7"
+    def SONIC_VERSION = "2.0.0"
+
+    dependencies = [
+
+            androidAppCompatV7      : 'com.android.support:appcompat-v7:22.2.1',
+            androidSupportV4        : 'com.android.support:support-v4:22.2.1',
+            androidSupportDesign    : 'com.android.support:design:22.2.1',
+
+            leakCanary              : 'com.squareup.leakcanary:leakcanary-android:' + LEAK_CANARY_VERSION,
+            agentWeb                : 'com.just.agentweb:agentweb:' + AGENT_WEB_VERSION,
+            twinklingRefreshLayout  : 'com.lcodecorex:tkrefreshlayout:' + TWINKLING_REFRESH_VERSION,
+            tencentSonic            : 'com.tencent.sonic:sdk:' + SONIC_VERSION
+    ]
+}

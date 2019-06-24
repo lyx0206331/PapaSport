@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="app_btn">#ff822b</color>
+    
+    <color name="black_a">#aaaaaa</color>
+    <color name="black_3">#333333</color>
+    <color name="black_9">#999999</color>
+    <color name="black_6">#666666</color>
+    <color name="black_g">#8e8e93</color>
+    <color name="red_ff">#ff3300</color>
+    <color name="red_bg">#ff0000</color>
+     <color name="red_state">#e46634</color>
+     
+    <color name="nocolor">#00000000</color>
+    <color name="trans">#a1000000</color>
+    
+    <color name="line_color">#c7c7cc</color>
+    <color name="orange_ff">#ff7e00</color>
+    <color name="orange_common">#de7424</color>
+    <color name="orange_remaining_member">#ed6d10</color>
+    <color name="cyan">#26d4d0</color>
+    <!-- 时间text颜色 -->
+     <color name="orange_time">#ec6c0e</color>
+     
+    <color name="gray_c">#cccccc</color>
+    <color name="gray_f5">#f5f5f5</color>
+    <color name="gray_f2">#f2f2f2</color>
+    <color name="gray_ea">#eaeaea</color>
+    <color name="gray_6d">#6d6d72</color>
+    <color name="gray_eb">#ebebeb</color>
+    <color name="gray_ebaa">#e1ebebeb</color>
+    <color name="gray_dia">#aaebebeb</color>
+    
+    <color name="gray_bg">#efeff4</color>
+    
+    <!--———————————————— 车辆颜色定义 ——————————————-->
+    <color name="back">#111111</color>
+    <color name="white">#ffffff</color>
+    <color name="gray">#a0a0a0</color>
+    <color name="red">#e60012</color>
+    <color name="blue">#00479d</color>
+    <color name="green">#009944</color>
+    <color name="yellow">#fff100</color>
+    <color name="gold">#d3ac71</color>
+    <color name="orange">#f39500</color>
+    <color name="purple">#601986</color>
+    <color name="brown">#704929</color>
+    
+</resources>
