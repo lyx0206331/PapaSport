@@ -1,14 +1,17 @@
 package com.adrian.papasport
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.widget.FrameLayout
 import com.adrian.basemodule.LogUtils
-import com.adrian.papasport.view.WebLayout
+import com.adrian.papasport.view.SmartRefreshWebLayout
 import com.just.agentweb.*
+import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import kotlinx.android.synthetic.main.activity_base_web.*
 
 class MainActivity : BaseWebActivity() {
@@ -26,8 +29,16 @@ class MainActivity : BaseWebActivity() {
 //        toolbar.visibility = View.GONE
     }
 
+    override fun addBGChild(frameLayout: FrameLayout) {
+        frameLayout.setBackgroundColor(Color.TRANSPARENT)
+    }
+
     override fun getLayoutResId(): Int {
         return R.layout.activity_base_web
+    }
+
+    override fun getAgentWebSettings(): AbsAgentWebSettings {
+        return AgentWebSettingsImpl.getInstance()
     }
 
     override fun getMiddleWareWebClient(): MiddlewareWebClientBase {
@@ -73,10 +84,19 @@ class MainActivity : BaseWebActivity() {
         wv.settings.loadWithOverviewMode = true
         wv.settings.setSupportZoom(true)
         return wv
+//        return null
     }
 
     override fun getWebLayout(): IWebLayout<*, *>? {
-        return WebLayout(this)
+        val smartRefreshWebLayout = SmartRefreshWebLayout(this)
+        val smartRefreshLayout = smartRefreshWebLayout.layout as SmartRefreshLayout
+        smartRefreshLayout.setOnRefreshListener {
+            agentWeb.urlLoader.reload()
+            smartRefreshLayout.postDelayed({
+                smartRefreshLayout.finishRefresh()
+            }, 2000)
+        }
+        return smartRefreshWebLayout
 //        return null
     }
 

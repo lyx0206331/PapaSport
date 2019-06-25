@@ -1,12 +1,6 @@
 package com.adrian.nfcmodule;
 
-import NFC.NdefMessageParser;
-import NFC.ParsedNdefRecord;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -16,22 +10,16 @@ import android.nfc.tech.MifareClassic;
 import android.nfc.tech.MifareUltralight;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.provider.Settings;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
  * author:RanQing
  * date:2019/6/25 0025 2:07
- * description:
+ * description:NFC工具类
  **/
 public class NFCUtils {
 
@@ -39,109 +27,17 @@ public class NFCUtils {
 
     private INFCListener listener;
 
-    private static final DateFormat TIME_FORMAT = SimpleDateFormat
-            .getDateTimeInstance();
-    private NfcAdapter mAdapter;
-    private PendingIntent mPendingIntent;
-    private NdefMessage mNdefPushMessage;
-    private AlertDialog mDialog;
-
     public NFCUtils(Context context, INFCListener listener) {
         this.context = context;
         this.listener = listener;
     }
 
-    public void setListener(INFCListener listener) {
-        this.listener = listener;
-    }
-
-    private void setPrompt(String msg) {
-        if (listener != null) {
-            listener.prompt(msg);
-        }
-    }
-
-    public void onCreate() {
-        resolveIntent(((Activity)context).getIntent());
-
-        mDialog = new AlertDialog.Builder(context).setNeutralButton("Ok", null)
-                .create();
-
-        // 获取默认的NFC控制器
-        mAdapter = NfcAdapter.getDefaultAdapter(context);
-
-        //拦截系统级的NFC扫描，例如扫描蓝牙
-        mPendingIntent = PendingIntent.getActivity(context, 0, new Intent(context,
-                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        mNdefPushMessage = new NdefMessage(new NdefRecord[] { newTextRecord("",
-                Locale.ENGLISH, true) });
-
-//		verifyStoragePermissions(this);
-    }
-
-    public void onResume() {
-        if (mAdapter == null) {
-            if (!mAdapter.isEnabled()) {
-                showWirelessSettingsDialog();
-            }
-
-            showMessage("error", " NO NFC");
-
-            setPrompt("设备不支持NFC！");
-
-            return;
-        }
-        if (!mAdapter.isEnabled()) {
-            listener.prompt("请在系统设置中先启用NFC功能！");
-            return;
-        }
-
-        if (mAdapter != null) {
-            //隐式启动
-            mAdapter.enableForegroundDispatch((Activity)context, mPendingIntent, null, null);
-            mAdapter.enableForegroundNdefPush((Activity)context, mNdefPushMessage);
-        }
-    }
-
-    public void onPause() {
-        if (mAdapter != null) {
-            //隐式启动
-            mAdapter.disableForegroundDispatch((Activity)context);
-            mAdapter.disableForegroundNdefPush((Activity)context);
-        }
-    }
-
-    //获取系统隐式启动的
-    public void onNewIntent(Intent intent) {
-        ((Activity)context).setIntent(intent);
-        resolveIntent(intent);
-    }
-//	private static final int REQUEST_EXTERNAL_STORAGE = 1;
-//	private static String[] PERMISSIONS_STORAGE = {
-//			"android.permission.READ_EXTERNAL_STORAGE",
-//			"android.permission.WRITE_EXTERNAL_STORAGE" };
-//	// 检查读写权限
-//	public static void verifyStoragePermissions(Activity activity) {
-//		try {
-//			// 检测是否有写的权限
-//			int permission = ActivityCompat.checkSelfPermission(activity,
-//					"android.permission.WRITE_EXTERNAL_STORAGE");
-//			if (permission != PackageManager.PERMISSION_GRANTED) {
-//				// 没有写的权限，去申请写的权限，会弹出对话框
-//				ActivityCompat.requestPermissions(activity,
-//						PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
     //16进制字符串转换为String
-    private String hexString = "0123456789ABCDEF";
     public String decode(String bytes) {
         if (bytes.length() != 30) {
             return null;
         }
+        String hexString = "0123456789ABCDEF";
         ByteArrayOutputStream baos = new ByteArrayOutputStream(
                 bytes.length() / 2);
         // 将每2位16进制整数组装成一个字节
@@ -152,7 +48,7 @@ public class NFCUtils {
     }
 
     // 字符序列转换为16进制字符串
-    private static String bytesToHexString(byte[] src, boolean isPrefix) {
+    private String bytesToHexString(byte[] src, boolean isPrefix) {
         StringBuilder stringBuilder = new StringBuilder();
         if (isPrefix == true) {
             stringBuilder.append("0x");
@@ -172,14 +68,8 @@ public class NFCUtils {
         return stringBuilder.toString();
     }
 
-    private void showMessage(String title, String message) {
-        mDialog.setTitle(title);
-        mDialog.setMessage(message);
-        mDialog.show();
-    }
-
-    private NdefRecord newTextRecord(String text, Locale locale,
-                                     boolean encodeInUtf8) {
+    public NdefRecord newTextRecord(String text, Locale locale,
+                                    boolean encodeInUtf8) {
         byte[] langBytes = locale.getLanguage().getBytes(
                 Charset.forName("US-ASCII"));
 
@@ -200,29 +90,8 @@ public class NFCUtils {
                 new byte[0], data);
     }
 
-    private void showWirelessSettingsDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("nfc_disabled");
-        builder.setPositiveButton(android.R.string.ok,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(
-                                Settings.ACTION_WIRELESS_SETTINGS);
-                        context.startActivity(intent);
-                    }
-                });
-        builder.setNegativeButton(android.R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ((Activity)context).finish();
-                    }
-                });
-        builder.create().show();
-        return;
-    }
-
     //初步判断是什么类型NFC卡
-    private void resolveIntent(Intent intent) {
+    public void resolveIntent(Intent intent) {
         String action = intent.getAction();
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
@@ -248,8 +117,7 @@ public class NFCUtils {
                 msgs = new NdefMessage[] { msg };
             }
             // Setup the views
-            listener.prompt("");
-            buildTagViews(msgs);
+            listener.showNfcData(msgs);
         }
     }
 
@@ -260,6 +128,7 @@ public class NFCUtils {
         byte[] id = tag.getId();
         sb.append("Tag ID (hex): ").append(getHex(id)).append("\n");
         sb.append("Tag ID (dec): ").append(getDec(id)).append("\n");
+        listener.getDecTagId(getDec(id));
         sb.append("ID (reversed): ").append(getReversed(id)).append("\n");
 
 //		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH:mm:ss
@@ -369,32 +238,9 @@ public class NFCUtils {
         return result;
     }
 
-    //显示NFC扫描的数据
-    private void buildTagViews(NdefMessage[] msgs) {
-        if (msgs == null || msgs.length == 0) {
-            return;
-        }
-        // Parse the first message in the list
-        // Build views for all of the sub records
-        Date now = new Date();
-        List<ParsedNdefRecord> records = NdefMessageParser.parse(msgs[0]);
-        StringBuilder sb = new StringBuilder();
-        final int size = records.size();
-        for (int i = 0; i < size; i++) {
-            TextView timeView = new TextView(context);
-            timeView.setText(TIME_FORMAT.format(now));
-            ParsedNdefRecord record = records.get(i);
-            sb.append(record.getViewText());
-//            promt.append(record.getViewText());
-        }
-        setPrompt(sb.toString());
-    }
-
     /**
      *
      * 读取SD卡中文本文件
-     *
-     * @param fileName
      *
      * @return
      */
@@ -429,16 +275,16 @@ public class NFCUtils {
                 dir.mkdirs();
                 file.createNewFile();
             }
-            FileOutputStream fileOut = null;
-            BufferedOutputStream writer = null;
-            OutputStreamWriter outputStreamWriter = null;
-            BufferedWriter bufferedWriter = null;
+            FileOutputStream fileOut;
+            BufferedOutputStream writer;
+            OutputStreamWriter outputStreamWriter;
+            BufferedWriter bufferedWriter;
             try {
                 fileOut = new FileOutputStream(file);
                 writer = new BufferedOutputStream(fileOut);
                 outputStreamWriter = new OutputStreamWriter(writer, "UTF-8");
                 bufferedWriter = new BufferedWriter(outputStreamWriter);
-                bufferedWriter.write(new String(sb.toString()));
+                bufferedWriter.write(sb);
                 bufferedWriter.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -454,6 +300,18 @@ public class NFCUtils {
     }
 
     public interface INFCListener {
-        void prompt(String msg);
+        /**
+         * 显示所有NFC数据
+         *
+         * @param msgs
+         */
+        void showNfcData(NdefMessage[] msgs);
+
+        /**
+         * 获取解码后的TagID
+         *
+         * @param decTagId
+         */
+        void getDecTagId(long decTagId);
     }
 }

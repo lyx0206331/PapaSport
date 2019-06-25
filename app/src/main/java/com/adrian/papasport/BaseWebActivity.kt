@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.ViewGroup
 import android.webkit.WebView
+import android.widget.FrameLayout
 import com.just.agentweb.*
 
 /**
@@ -21,7 +22,7 @@ abstract class BaseWebActivity : AppCompatActivity() {
         const val TAG = "BaseWebActivity"
     }
 
-    private lateinit var agentWeb: AgentWeb
+    protected lateinit var agentWeb: AgentWeb
 
 
     protected val alertDialog by lazy {
@@ -60,7 +61,12 @@ abstract class BaseWebActivity : AppCompatActivity() {
             .createAgentWeb()
             .ready()
             .go(getUrl())
+
+        // 得到 AgentWeb 最底层的控件
+        addBGChild(agentWeb.webCreator.webParentLayout)
     }
+
+    protected abstract fun addBGChild(frameLayout: FrameLayout)
 
     @LayoutRes abstract fun getLayoutResId(): Int
 
@@ -97,7 +103,7 @@ abstract class BaseWebActivity : AppCompatActivity() {
 
     protected abstract fun getErrorLayoutEntity(): ErrorLayoutEntity
 
-    protected fun getAgentWebSettings() = AgentWebSettingsImpl.getInstance()
+    protected abstract fun getAgentWebSettings(): AbsAgentWebSettings
 
     protected abstract fun getAgentWebParent(): ViewGroup
 

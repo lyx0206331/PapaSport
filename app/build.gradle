@@ -54,6 +54,8 @@ dependencies {
     implementation rootProject.ext.dependencies.androidSupportDesign
     implementation rootProject.ext.dependencies.twinklingRefreshLayout
     implementation rootProject.ext.dependencies.tencentSonic
+    implementation rootProject.ext.dependencies.smartRefreshLayout
+    implementation rootProject.ext.dependencies.smartRefreshHeader
 
     implementation project(":basemodule")
     if (rootProject.ext.isModule) {
