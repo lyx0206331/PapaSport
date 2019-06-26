@@ -14,14 +14,15 @@
         android:layout_height="?android:actionBarSize"
         android:background="?attr/colorPrimary"
         app:theme="@style/toolBar">
+
         <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"/>
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
     </android.support.v7.widget.Toolbar>
 
 </LinearLayout>

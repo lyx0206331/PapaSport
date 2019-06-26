@@ -20,15 +20,12 @@ class MainActivity : BaseWebActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.title = ""
         toolbar.setBackgroundColor(Color.WHITE)
-        setSupportActionBar(toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-        }
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.navigationIcon = ContextCompat.getDrawable(this, R.mipmap.back)
-        toolbar.navigationIcon?.setVisible(false, false)
 
 //        toolbar.visibility = View.GONE
     }
