@@ -3,6 +3,7 @@ package com.adrian.papasport
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
@@ -19,12 +20,15 @@ class MainActivity : BaseWebActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        toolbar.title = ""
+        toolbar.title = ""
+        toolbar.setBackgroundColor(Color.WHITE)
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
         }
-        toolbar.setNavigationOnClickListener { alertDialog.show() }
+        toolbar.setNavigationOnClickListener { onBackPressed() }
+        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.mipmap.back)
+        toolbar.navigationIcon?.setVisible(false, false)
 
 //        toolbar.visibility = View.GONE
     }

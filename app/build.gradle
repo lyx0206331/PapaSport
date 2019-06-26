@@ -13,6 +13,8 @@ android {
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
+
+        flavorDimensions "default"
     }
 
     signingConfigs {
@@ -27,20 +29,57 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+
             minifyEnabled true
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def fileName = "PapaSports_v${defaultConfig.versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+                    outputFileName = fileName
+                }
+            }
         }
         debug {
-            signingConfig signingConfigs.debug
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+
+            versionNameSuffix "-debug"
             minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
+    productFlavors {
+
+        official {}
+        wandoujia {}
+        _360 {}
+        yingyongbao {}
+        xiaomi {}
+        baidu {}
+        huawei {}
+        jifeng {}
+        meizu {}
+    }
+
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
     }
+}
+
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
 
 dependencies {
