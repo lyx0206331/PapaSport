@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.zyapi.CommonApi;
 import android_serialport_api.sample.SerialPortActivity;
 import android_serialport_api.sample.SerialPortPreferences;
 import com.adrian.rfidmodule.R;
@@ -24,7 +25,6 @@ import com.by100.util.AppConfig;
 import com.by100.util.CopyFileToSD;
 import com.by100.util.NationDeal;
 import com.ivsign.android.IDCReader.IDCReaderSDK;
-import android.zyapi.CommonApi;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -94,7 +94,6 @@ public class ByIdActivity extends SerialPortActivity {
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				mCommonApi.setGpioOut(53,1);
 
 				mCommonApi.setGpioOut(83,1);
@@ -142,7 +141,6 @@ public class ByIdActivity extends SerialPortActivity {
 					if(isOpen)
 						ReadCard();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -269,10 +267,8 @@ public class ByIdActivity extends SerialPortActivity {
 				Readflage = -3;// 寻卡失败
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			Readflage = -99;// 读取数据异常
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			Readflage = -99;// 读取数据异常
 		}
 	}
@@ -291,7 +287,6 @@ public class ByIdActivity extends SerialPortActivity {
 
 	@Override
 	protected void onDataReceived(byte[] buffer, int size) {
-		// TODO Auto-generated method stub
 		datalen = size;
 		if(tempFlag==-1)
 			recData = buffer;
@@ -300,7 +295,6 @@ public class ByIdActivity extends SerialPortActivity {
 	private Handler handler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
-			// TODO Auto-generated method stub
 			super.handleMessage(msg);
 			if(msg.what!=0){
 				return;
@@ -357,12 +351,10 @@ public class ByIdActivity extends SerialPortActivity {
 				Thread.sleep(100);
 			}
 			catch (IOException e) {
-				// TODO Auto-generated catch block
 				ett.setText("读取数据异常！");
 				image.setImageBitmap(BitmapFactory.decodeResource(
 						getResources(), R.mipmap.face));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				ett.setText("读取数据异常！");
 				image.setImageBitmap(BitmapFactory.decodeResource(
 						getResources(), R.mipmap.face));
@@ -452,14 +444,12 @@ public class ByIdActivity extends SerialPortActivity {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		isPlay = prefs.getBoolean("checkbox",true);
 	}
 
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		isRun = false;
 //		if(mComFd>0){
 		mCommonApi.setGpioDir(83,1);

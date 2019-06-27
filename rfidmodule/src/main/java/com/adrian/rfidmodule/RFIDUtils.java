@@ -98,7 +98,6 @@ public class RFIDUtils {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // TODO Auto-generated method stub
                 mCommonApi.setGpioOut(53, 1);
 
                 mCommonApi.setGpioOut(83, 1);
@@ -125,7 +124,6 @@ public class RFIDUtils {
                     if (isOpen)
                         ReadCard();
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -252,10 +250,8 @@ public class RFIDUtils {
                 Readflage = -3;// 寻卡失败
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             Readflage = -99;// 读取数据异常
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             Readflage = -99;// 读取数据异常
         }
     }
@@ -382,7 +378,6 @@ public class RFIDUtils {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
             super.handleMessage(msg);
             if (msg.what != 0) {
                 return;
@@ -408,10 +403,8 @@ public class RFIDUtils {
                 }
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 listener.onError(-1000);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 listener.onError(-1000);
             }
         }
