@@ -30,12 +30,12 @@ android {
     buildTypes {
         release {
             // 不显示Log
-            buildConfigField "boolean", "LOG_DEBUG", "false"
-
-            minifyEnabled true
-            zipAlignEnabled true
-            // 移除无用的resource文件
-            shrinkResources true
+//            buildConfigField "boolean", "LOG_DEBUG", "false"
+//
+//            minifyEnabled true
+//            zipAlignEnabled true
+//            // 移除无用的resource文件
+//            shrinkResources true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
@@ -62,14 +62,14 @@ android {
     productFlavors {
 
         official {}
-        wandoujia {}
-        _360 {}
-        yingyongbao {}
-        xiaomi {}
-        baidu {}
-        huawei {}
-        jifeng {}
-        meizu {}
+//        wandoujia {}
+//        _360 {}
+//        yingyongbao {}
+//        xiaomi {}
+//        baidu {}
+//        huawei {}
+//        jifeng {}
+//        meizu {}
     }
 
     lintOptions {
@@ -79,7 +79,7 @@ android {
 }
 
 def releaseTime() {
-    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+    return new Date().format("yyyy-MM-dd-HH-mm", TimeZone.getTimeZone("GMT+8"))
 }
 
 dependencies {

@@ -121,8 +121,9 @@ public class RFIDUtils {
             while (isRun) {
                 try {
                     Thread.sleep(1000);
-                    if (isOpen)
+                    if (isOpen) {
                         ReadCard();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -197,10 +198,11 @@ public class RFIDUtils {
                             decodeInfo[7] = TmpStr.substring(94, 102);
                             decodeInfo[8] = TmpStr.substring(102, 110);
                             decodeInfo[9] = TmpStr.substring(110, 128);
-                            if (decodeInfo[1].equals("1"))
+                            if (decodeInfo[1].equals("1")) {
                                 decodeInfo[1] = "男";
-                            else
+                            } else {
                                 decodeInfo[1] = "女";
+                            }
                             try {
                                 int code = Integer.parseInt(decodeInfo[2]
                                         .toString());
@@ -292,8 +294,9 @@ public class RFIDUtils {
         mCommonApi.closeCom(mComFd);
 //		}
 
-        if (mReadThread != null)
+        if (mReadThread != null) {
             mReadThread.interrupt();
+        }
         closeSerialPort();
         mSerialPort = null;
     }

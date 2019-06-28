@@ -8,8 +8,8 @@ ext {
             applicationId               : "com.adrian.papasport",
             minSdkVersion               : 19,
             targetSdkVersion            : 22,
-            versionCode                 : 1,
-            versionName                 : "1.0.0"
+            versionCode                 : 3,
+            versionName                 : "0.0.1"
     ]
 
     def AGENT_WEB_VERSION = "4.0.3-beta"

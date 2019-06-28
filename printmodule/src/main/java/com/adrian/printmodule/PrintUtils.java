@@ -4,11 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -19,7 +15,6 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -27,26 +22,17 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Hashtable;
-
 import qs.util.BarcodeCreater;
 import qs.util.BitmapTools;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * author:RanQing
  * date:2019/6/27 0027 1:45
- * description:Pos机相关功能分离
+ * description:Pos机工具类.相关功能分离
  **/
 public class PrintUtils {
 
