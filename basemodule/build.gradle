@@ -30,5 +30,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api rootProject.ext.dependencies.androidAppCompatV7
+    api rootProject.ext.dependencies.androidSupportDesign
 //    debugImplementation rootProject.ext.dependencies.leakCanary
 }

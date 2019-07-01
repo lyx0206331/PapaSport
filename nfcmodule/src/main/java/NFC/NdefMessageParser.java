@@ -66,7 +66,7 @@ public class NdefMessageParser {
 	public static String decode(String bytes) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(
 				bytes.length() / 2);
-		// ½«Ã¿2Î»16½øÖÆÕûÊı×é×°³ÉÒ»¸ö×Ö½Ú
+        // å°†æ¯2ä½16è¿›åˆ¶æ•´æ•°ç»„è£…æˆä¸€ä¸ªå­—èŠ‚
 		for (int i = 0; i < bytes.length(); i += 2)
 			baos.write((hexString.indexOf(bytes.charAt(i)) << 4 | hexString
 					.indexOf(bytes.charAt(i + 1))));

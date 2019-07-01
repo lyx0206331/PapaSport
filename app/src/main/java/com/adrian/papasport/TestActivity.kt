@@ -4,8 +4,6 @@ import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.media.MediaPlayer
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
@@ -13,28 +11,19 @@ import android.os.Bundle
 import android.os.Handler
 import android.posapi.PosApi
 import android.provider.Settings
-import android.support.v4.content.ContextCompat
-import android.view.ViewGroup
-import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.widget.FrameLayout
-import com.adrian.basemodule.LogUtils.logE
+import com.adrian.basemodule.BaseActivity
+import com.adrian.basemodule.LogUtils
 import com.adrian.basemodule.ToastUtils.showToastShort
 import com.adrian.basemodule.orFalse
 import com.adrian.nfcmodule.NFCUtils
 import com.adrian.papasport.model.NFCTagInfo
-import com.adrian.papasport.view.SmartRefreshWebLayout
 import com.adrian.printmodule.PrintUtils
 import com.adrian.rfidmodule.IDCardInfo
 import com.adrian.rfidmodule.RFIDUtils
-import com.just.agentweb.*
-import com.scwang.smartrefresh.layout.SmartRefreshLayout
-import kotlinx.android.synthetic.main.activity_base_web.*
-import org.json.JSONObject
+import kotlinx.android.synthetic.main.activity_test.*
 import java.util.*
 
-class MainActivity : BaseWebActivity() {
+class TestActivity : BaseActivity() {
 
     private var nfcAdapter: NfcAdapter? = null
     private var mPendingIntent: PendingIntent? = null
@@ -42,28 +31,26 @@ class MainActivity : BaseWebActivity() {
     private lateinit var nfcDialog: AlertDialog
 
     private lateinit var nfcUtils: NFCUtils
-    private var curUrl: String? = null
-    private var pageTag: String = "memberSearch"
 
     private lateinit var rfidUtils: RFIDUtils
     private val player by lazy { MediaPlayer.create(this, R.raw.success) }
 
     private lateinit var scanPrintUtils: PrintUtils
 
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_test
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.title = ""
-        toolbar.setBackgroundColor(Color.WHITE)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.mipmap.back)
-
-//        toolbar.visibility = View.GONE
+        btnPrintText.setOnClickListener { scanPrintUtils.printText("asdfasdfasdf") }
+        btnPrintQr.setOnClickListener { scanPrintUtils.printQRCode("assdasdffd") }
+        btnPrintBar.setOnClickListener { scanPrintUtils.printBarCode("asdfasdffasd") }
+        btnScan.setOnClickListener { scanPrintUtils.ScanDomn() }
 
         initNFC()
-        initRFID()
+//        initRFID()
         initScanPrint()
     }
 
@@ -78,10 +65,8 @@ class MainActivity : BaseWebActivity() {
 
             override fun onScanSuccess(msg: String?) {
                 val ticketNum = NFCTagInfo(msg.orEmpty(), "").toJsonString()
-                logE(TAG, ticketNum)
-                agentWeb.jsAccessEntrace.quickCallJs(
-                    "andriodGetCode", ticketNum
-                )
+                LogUtils.logE(BaseWebActivity.TAG, ticketNum)
+                scanPrintUtils.printText(ticketNum)
                 player.start()
             }
 
@@ -119,11 +104,8 @@ class MainActivity : BaseWebActivity() {
         rfidUtils = RFIDUtils(this, object : RFIDUtils.IRfidListener {
             override fun onReadSuccess(idCardInfo: IDCardInfo?, state: Int) {
                 val jsonStr = idCardInfo?.toJsonString().orEmpty()
-                logE(TAG, jsonStr)
-                agentWeb.jsAccessEntrace.quickCallJs(
-                    "andriodCallH5",
-                    jsonStr
-                )
+                LogUtils.logE(BaseWebActivity.TAG, jsonStr)
+                showToastShort(jsonStr)
                 player.start()
             }
 
@@ -156,11 +138,8 @@ class MainActivity : BaseWebActivity() {
 
             override fun getIds(decTagId: Long, reversedId: Long) {
                 val jsonStr = NFCTagInfo("$decTagId", "$reversedId").toJsonString()
-                logE(TAG, jsonStr)
-                agentWeb.jsAccessEntrace.quickCallJs(
-                    "andriodCallH5",
-                    jsonStr
-                )
+                LogUtils.logE(BaseWebActivity.TAG, jsonStr)
+                showToastShort(jsonStr)
             }
         })
 
@@ -205,11 +184,8 @@ class MainActivity : BaseWebActivity() {
             showToastShort("请在系统设置中先启用NFC功能！")
             return
         }
-
-        if (isTargetPage()) {
-            bootNFC()
-            rfidUtils.resume()
-        }
+        bootNFC()
+//        rfidUtils.resume()
 
         // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
         Handler().postDelayed({
@@ -233,7 +209,7 @@ class MainActivity : BaseWebActivity() {
     override fun onPause() {
         super.onPause()
         closeNFC()
-        rfidUtils.closeRfidRead()
+//        rfidUtils.closeRfidRead()
     }
 
     /**
@@ -247,7 +223,7 @@ class MainActivity : BaseWebActivity() {
     }
 
     override fun onDestroy() {
-        rfidUtils.release()
+//        rfidUtils.release()
         scanPrintUtils.release()
         super.onDestroy()
     }
@@ -283,145 +259,4 @@ class MainActivity : BaseWebActivity() {
             })
         builder.create().show()
     }
-
-    override fun addBGChild(frameLayout: FrameLayout) {
-        frameLayout.setBackgroundColor(Color.TRANSPARENT)
-    }
-
-    override fun getLayoutResId(): Int {
-        return R.layout.activity_base_web
-    }
-
-    override fun getAndroidInterface(): AndroidInterface {
-        return AndroidInterface(this, agentWeb, object : AndroidInterface.IJsListener {
-            override fun printMsg(msg: String) {
-//                showToastShort(msg)
-//                val content = "asdfasdf\nasdfasdfa\n12342134\n-------------------\n12343    132414  asdf\n" +
-//                        "================="
-                val jsonObj = JSONObject(msg)
-                val type = jsonObj.optInt("type")
-                val content = jsonObj.optString("content")
-                when (type) {
-                    0 -> showToastShort(content)
-                    //门票
-                    1 -> ""
-                    //支付凭证
-                    2 -> ""
-                }
-                scanPrintUtils.printText(content)
-            }
-
-            override fun startScan() {
-                scanPrintUtils.ScanDomn()
-            }
-        })
-    }
-
-    override fun getAgentWebSettings(): AbsAgentWebSettings {
-        return AgentWebSettingsImpl.getInstance()
-    }
-
-    override fun getMiddleWareWebClient(): MiddlewareWebClientBase {
-        return object : MiddlewareWebClientBase() {}
-    }
-
-    override fun getMiddleWareWebChrome(): MiddlewareWebChromeBase {
-        return object : MiddlewareWebChromeBase() {}
-    }
-
-    override fun getErrorLayoutEntity(): ErrorLayoutEntity {
-        return ErrorLayoutEntity()
-    }
-
-    override fun getWebChromeClient(): WebChromeClient? {
-        return object : WebChromeClient() {
-            override fun onReceivedTitle(view: WebView?, title: String?) {
-                super.onReceivedTitle(view, title)
-                tvTitle?.text = title
-            }
-        }
-    }
-
-    override fun getWebViewClient(): WebViewClient? {
-        return object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                logE(TAG, "shouldOverrideUrlLoading")
-                return super.shouldOverrideUrlLoading(view, request)
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                logE(TAG, "onPageStarted. url: $url")
-                super.onPageStarted(view, url, favicon)
-            }
-
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                logE(TAG, "shouldOverrideUrlLoading. url: $url")
-                return super.shouldOverrideUrlLoading(view, url)
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                logE(TAG, "onPageFinished. url: $url")
-                curUrl = url
-                if (isTargetPage()) {
-                    bootNFC()
-                    rfidUtils.resume()
-                } else {
-                    closeNFC()
-                    rfidUtils.closeRfidRead()
-                }
-                super.onPageFinished(view, url)
-            }
-        }
-    }
-
-    private fun isTargetPage(): Boolean {
-        return curUrl?.endsWith(pageTag).orFalse()
-    }
-
-    override fun getWebView(): WebView? {
-        val wv = WebView(this)
-        wv.settings.javaScriptEnabled = true
-        wv.settings.useWideViewPort = true
-        wv.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
-        wv.settings.loadWithOverviewMode = true
-        wv.settings.setSupportZoom(true)
-        return wv
-//        return null
-    }
-
-    override fun getWebLayout(): IWebLayout<*, *>? {
-        val smartRefreshWebLayout = SmartRefreshWebLayout(this)
-        val smartRefreshLayout = smartRefreshWebLayout.layout as SmartRefreshLayout
-        smartRefreshLayout.setOnRefreshListener {
-            agentWeb.urlLoader.reload()
-            smartRefreshLayout.postDelayed({
-                smartRefreshLayout.finishRefresh()
-            }, 2000)
-        }
-        return smartRefreshWebLayout
-//        return null
-    }
-
-    override fun getPermissionInterceptor(): PermissionInterceptor? {
-        return null
-    }
-
-    override fun getAgentWebUIController(): AgentWebUIControllerImplBase? {
-        return null
-    }
-
-    override fun getOpenOtherAppWay(): DefaultWebClient.OpenOtherPageWays? {
-        return DefaultWebClient.OpenOtherPageWays.ASK
-    }
-
-    override fun getAgentWebParent(): ViewGroup {
-        return container
-    }
-
-    override fun getUrl(): String {
-        //https://m.jd.com/
-        return "http://pda.test.papasports.com.cn"
-//        return "http://192.168.1.12:8039"
-    }
-
 }

@@ -1,14 +1,13 @@
 package com.adrian.papasport
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.support.annotation.ColorInt
-import android.support.annotation.LayoutRes
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
+import com.adrian.basemodule.BaseActivity
 import com.just.agentweb.*
 
 /**
@@ -16,7 +15,7 @@ import com.just.agentweb.*
  * date:2019/6/22 0022 20:47
  * description:网页加载界面
  **/
-abstract class BaseWebActivity : AppCompatActivity() {
+abstract class BaseWebActivity : BaseActivity() {
 
     companion object {
         const val TAG = "BaseWebActivity"
@@ -36,7 +35,6 @@ abstract class BaseWebActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getLayoutResId())
         buildAgentWeb()
     }
 
@@ -64,11 +62,13 @@ abstract class BaseWebActivity : AppCompatActivity() {
 
         // 得到 AgentWeb 最底层的控件
         addBGChild(agentWeb.webCreator.webParentLayout)
+
+        agentWeb.jsInterfaceHolder.addJavaObject("android", getAndroidInterface())
     }
 
-    protected abstract fun addBGChild(frameLayout: FrameLayout)
+    abstract fun getAndroidInterface(): AndroidInterface
 
-    @LayoutRes abstract fun getLayoutResId(): Int
+    protected abstract fun addBGChild(frameLayout: FrameLayout)
 
     abstract fun getUrl(): String
 

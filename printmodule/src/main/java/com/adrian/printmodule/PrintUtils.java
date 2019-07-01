@@ -96,12 +96,6 @@ public class PrintUtils {
 
                             listener.onScanSuccess(str);
 
-//                            // 开启提示音，提示客户条码或者二维码已经被扫到
-//                            player.start();
-//
-//                            // 显示到编辑框中
-//                            mTv.setText(str);
-
                         } catch (UnsupportedEncodingException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();

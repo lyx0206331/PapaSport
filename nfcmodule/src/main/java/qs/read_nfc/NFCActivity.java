@@ -49,8 +49,8 @@ public class NFCActivity extends Activity {
             }
 
             @Override
-            public void getDecTagId(long decTagId) {
-                Toast.makeText(NFCActivity.this, "tagID:" + decTagId, Toast.LENGTH_SHORT).show();
+            public void getIds(long decTagId, long reversedId) {
+                Toast.makeText(NFCActivity.this, "tagID:" + decTagId + ", reversedID:" + reversedId, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -59,10 +59,10 @@ public class NFCActivity extends Activity {
 		mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null)
 				.create();
 
-		// »ñÈ¡Ä¬ÈÏµÄNFC¿ØÖÆÆ÷
+        // è·å–é»˜è®¤çš„NFCæ§åˆ¶å™¨
 		mAdapter = NfcAdapter.getDefaultAdapter(this);
 
-		//À¹½ØÏµÍ³¼¶µÄNFCÉ¨Ãè£¬ÀıÈçÉ¨ÃèÀ¶ÑÀ
+        //æ‹¦æˆªç³»ç»Ÿçº§çš„NFCæ‰«æï¼Œä¾‹å¦‚æ‰«æè“ç‰™
 		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
 				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         mNdefPushMessage = new NdefMessage(new NdefRecord[]{nfcUtils.newTextRecord("",
@@ -81,17 +81,17 @@ public class NFCActivity extends Activity {
 
 			showMessage("error", " NO NFC");
 
-			promt.setText("Éè±¸²»Ö§³ÖNFC£¡");
+            promt.setText("è®¾å¤‡ä¸æ”¯æŒNFCï¼");
 
 			return;
 		}
 		if (!mAdapter.isEnabled()) {
-			promt.setText("ÇëÔÚÏµÍ³ÉèÖÃÖĞÏÈÆôÓÃNFC¹¦ÄÜ£¡");
+            promt.setText("è¯·åœ¨ç³»ç»Ÿè®¾ç½®ä¸­å…ˆå¯ç”¨NFCåŠŸèƒ½ï¼");
 			return;
 		}
 
 		if (mAdapter != null) {
-			//ÒşÊ½Æô¶¯
+            //éšå¼å¯åŠ¨
 			mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
 			mAdapter.enableForegroundNdefPush(this, mNdefPushMessage);
 		}
@@ -101,7 +101,7 @@ public class NFCActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		if (mAdapter != null) {
-			//ÒşÊ½Æô¶¯
+            //éšå¼å¯åŠ¨
 			mAdapter.disableForegroundDispatch(this);
 			mAdapter.disableForegroundNdefPush(this);
 		}
@@ -133,7 +133,7 @@ public class NFCActivity extends Activity {
 		return;
 	}
 
-	//ÏÔÊ¾NFCÉ¨ÃèµÄÊı¾İ
+    //æ˜¾ç¤ºNFCæ‰«æçš„æ•°æ®
 	private void buildTagViews(NdefMessage[] msgs) {
 		if (msgs == null || msgs.length == 0) {
 			return;
@@ -151,7 +151,7 @@ public class NFCActivity extends Activity {
 		}
 	}
 
-	//»ñÈ¡ÏµÍ³ÒşÊ½Æô¶¯µÄ
+    //è·å–ç³»ç»Ÿéšå¼å¯åŠ¨çš„
 	@Override
 	public void onNewIntent(Intent intent) {
 		setIntent(intent);
@@ -161,14 +161,14 @@ public class NFCActivity extends Activity {
 //	private static String[] PERMISSIONS_STORAGE = {
 //			"android.permission.READ_EXTERNAL_STORAGE",
 //			"android.permission.WRITE_EXTERNAL_STORAGE" };
-//	// ¼ì²é¶ÁĞ´È¨ÏŞ
+//	// æ£€æŸ¥è¯»å†™æƒé™
 //	public static void verifyStoragePermissions(Activity activity) {
 //		try {
-//			// ¼ì²âÊÇ·ñÓĞĞ´µÄÈ¨ÏŞ
+//			// æ£€æµ‹æ˜¯å¦æœ‰å†™çš„æƒé™
 //			int permission = ActivityCompat.checkSelfPermission(activity,
 //					"android.permission.WRITE_EXTERNAL_STORAGE");
 //			if (permission != PackageManager.PERMISSION_GRANTED) {
-//				// Ã»ÓĞĞ´µÄÈ¨ÏŞ£¬È¥ÉêÇëĞ´µÄÈ¨ÏŞ£¬»áµ¯³ö¶Ô»°¿ò
+//				// æ²¡æœ‰å†™çš„æƒé™ï¼Œå»ç”³è¯·å†™çš„æƒé™ï¼Œä¼šå¼¹å‡ºå¯¹è¯æ¡†
 //				ActivityCompat.requestPermissions(activity,
 //						PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
 //			}

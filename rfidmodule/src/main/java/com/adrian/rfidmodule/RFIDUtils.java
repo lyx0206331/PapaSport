@@ -34,7 +34,7 @@ public class RFIDUtils {
     private int Readflage = -99;
     int datalen;
     private boolean isRun = true;
-    boolean isOpen = false;
+    public boolean isOpen = false;
     //    boolean isPlay;
     private byte[] cmd_SAM = {(byte) 0xAA, (byte) 0xAA, (byte) 0xAA, (byte) 0x96, 0x69, 0x00, 0x03, 0x12, (byte) 0xFF, (byte) 0xEE};
     private byte[] cmd_find = {(byte) 0xAA, (byte) 0xAA, (byte) 0xAA, (byte) 0x96, 0x69, 0x00, 0x03, 0x20, 0x01, 0x22};
@@ -68,7 +68,7 @@ public class RFIDUtils {
     public IRfidListener listener;
 
     public interface IRfidListener {
-        void onReadSuccess(String txtInfo, int state);
+        void onReadSuccess(IDCardInfo idCardInfo, int state);
 
         void onError(int state);
     }
@@ -294,6 +294,10 @@ public class RFIDUtils {
         mCommonApi.closeCom(mComFd);
 //		}
 
+        closeRfidRead();
+    }
+
+    public void closeRfidRead() {
         if (mReadThread != null) {
             mReadThread.interrupt();
         }
@@ -395,8 +399,18 @@ public class RFIDUtils {
                             + decodeInfo[7] + "-" + decodeInfo[8] + "\n"
                             + decodeInfo[9] + "\n";
 
+                    IDCardInfo idCardInfo = new IDCardInfo();
+                    idCardInfo.setName(decodeInfo[0]);
+                    idCardInfo.setSex(decodeInfo[1]);
+                    idCardInfo.setNationality(decodeInfo[2]);
+                    idCardInfo.setBirthDate(decodeInfo[3]);
+                    idCardInfo.setAddress(decodeInfo[4]);
+                    idCardInfo.setIdNumber(decodeInfo[5]);
+                    idCardInfo.setOffice(decodeInfo[6]);
+                    idCardInfo.setValidityPeriod(decodeInfo[7] + "-" + decodeInfo[8]);
+                    idCardInfo.setExtra(decodeInfo[9]);
 
-                    listener.onReadSuccess(text, Readflage);
+                    listener.onReadSuccess(idCardInfo, Readflage);
 
 //					Bitmap btMap_save=loadBitmapFromView(linearLayout_x);
 //

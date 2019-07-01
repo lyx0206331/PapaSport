@@ -128,8 +128,8 @@ public class NFCUtils {
         byte[] id = tag.getId();
         sb.append("Tag ID (hex): ").append(getHex(id)).append("\n");
         sb.append("Tag ID (dec): ").append(getDec(id)).append("\n");
-        listener.getDecTagId(getDec(id));
         sb.append("ID (reversed): ").append(getReversed(id)).append("\n");
+        listener.getIds(getDec(id), getReversed(id));
 
 //		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH:mm:ss
         //获取当前时间
@@ -308,10 +308,11 @@ public class NFCUtils {
         void showNfcData(NdefMessage[] msgs);
 
         /**
-         * 获取解码后的TagID
+         * 获取解码后的TagID及反向ID
          *
          * @param decTagId
+         * @param reversedId
          */
-        void getDecTagId(long decTagId);
+        void getIds(long decTagId, long reversedId);
     }
 }

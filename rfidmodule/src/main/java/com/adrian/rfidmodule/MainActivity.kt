@@ -26,8 +26,8 @@ class MainActivity : Activity() {
         setContentView(R.layout.rfidmodule_activity_main)
 
         rfidUtils = RFIDUtils(this, object : RFIDUtils.IRfidListener {
-            override fun onReadSuccess(txtInfo: String?, state: Int) {
-                textView1.text = txtInfo
+            override fun onReadSuccess(idCardInfo: IDCardInfo?, state: Int) {
+                textView1.text = idCardInfo?.toJsonString().orEmpty()
 
                 if (state == 1) {
                     val fis = FileInputStream(
