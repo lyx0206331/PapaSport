@@ -2,7 +2,6 @@ package com.adrian.papasport
 
 import android.app.AlertDialog
 import android.app.PendingIntent
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -14,6 +13,7 @@ import android.os.Handler
 import android.posapi.PosApi
 import android.provider.Settings
 import android.support.v4.content.ContextCompat
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
@@ -50,6 +50,9 @@ class MainActivity : BaseWebActivity() {
 
     private lateinit var scanPrintUtils: PrintUtils
 
+    private var isNfcOpen = false
+    private var isRfidOpen = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -62,8 +65,8 @@ class MainActivity : BaseWebActivity() {
 
 //        toolbar.visibility = View.GONE
 
-        initNFC()
-        initRFID()
+//        initNFC()
+//        initRFID()
         initScanPrint()
     }
 
@@ -188,8 +191,56 @@ class MainActivity : BaseWebActivity() {
         )
     }
 
+    private fun resetNfc() {
+        if (!isNfcOpen) {
+            initNFC()
+            if (isNfcEnable()) {
+                bootNFC()
+                isNfcOpen = true
+            }
+        }
+    }
+
+    private fun releaseNfc() {
+        if (isNfcOpen) {
+            closeNFC()
+            isNfcOpen = false
+        }
+    }
+
+    private fun resetRfid() {
+        if (!isRfidOpen) {
+            initRFID()
+            rfidUtils.resume()
+            isRfidOpen = true
+        }
+    }
+
+    private fun releaseRfid() {
+        if (isRfidOpen) {
+            rfidUtils.release()
+            isRfidOpen = false
+        }
+    }
+
     override fun onResume() {
         super.onResume()
+//        if (isNfcEnable()) return
+//
+//        if (isTargetPage()) {
+//            bootNFC()
+//            rfidUtils.resume()
+//        }
+
+        // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
+        Handler().postDelayed({
+            // 打开GPIO，给扫描头上电
+            scanPrintUtils.openDevice()
+
+        }, 1000)
+    }
+
+    private fun isNfcEnable(): Boolean {
         if (nfcAdapter == null) {
             if (!nfcAdapter?.isEnabled.orFalse()) {
                 showWirelessSettingsDialog()
@@ -199,24 +250,13 @@ class MainActivity : BaseWebActivity() {
 
             showToastShort("设备不支持NFC！")
 
-            return
+            return false
         }
         if (!nfcAdapter?.isEnabled.orFalse()) {
             showToastShort("请在系统设置中先启用NFC功能！")
-            return
+            return false
         }
-
-        if (isTargetPage()) {
-            bootNFC()
-            rfidUtils.resume()
-        }
-
-        // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
-        Handler().postDelayed({
-            // 打开GPIO，给扫描头上电
-            scanPrintUtils.openDevice()
-
-        }, 1000)
+        return true
     }
 
     /**
@@ -232,8 +272,8 @@ class MainActivity : BaseWebActivity() {
 
     override fun onPause() {
         super.onPause()
-        closeNFC()
-        rfidUtils.closeRfidRead()
+//        closeNFC()
+//        rfidUtils.closeRfidRead()
     }
 
     /**
@@ -247,7 +287,7 @@ class MainActivity : BaseWebActivity() {
     }
 
     override fun onDestroy() {
-        rfidUtils.release()
+//        rfidUtils.release()
         scanPrintUtils.release()
         super.onDestroy()
     }
@@ -269,18 +309,15 @@ class MainActivity : BaseWebActivity() {
         builder.setMessage("nfc_disabled")
         builder.setPositiveButton(
             android.R.string.ok
-        ) { dialogInterface, i ->
+        ) { _, _ ->
             val intent = Intent(
                 Settings.ACTION_WIRELESS_SETTINGS
             )
             startActivity(intent)
         }
-        builder.setNegativeButton(android.R.string.cancel,
-            object : DialogInterface.OnClickListener {
-                override fun onClick(dialogInterface: DialogInterface, i: Int) {
-                    finish()
-                }
-            })
+        builder.setNegativeButton(
+            android.R.string.cancel
+        ) { _, _ -> finish() }
         builder.create().show()
     }
 
@@ -305,7 +342,11 @@ class MainActivity : BaseWebActivity() {
                 when (type) {
                     0 -> showToastShort(content)
                     //门票
-                    1 -> ""
+                    1 -> {
+                        val view =
+                            LayoutInflater.from(this@MainActivity).inflate(R.layout.layout_qr_template, null, false)
+//                        ivBitmap.setImageBitmap(view.invisibleView2Bitmap())
+                    }
                     //支付凭证
                     2 -> ""
                 }
@@ -317,11 +358,17 @@ class MainActivity : BaseWebActivity() {
             }
 
             override fun turnOnNFC() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                if (isTargetPage()) {
+                    releaseRfid()
+                    resetNfc()
+                }
             }
 
             override fun turnOnRFID() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                if (isTargetPage()) {
+                    releaseNfc()
+                    resetRfid()
+                }
             }
         })
     }
@@ -371,12 +418,9 @@ class MainActivity : BaseWebActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 logE(TAG, "onPageFinished. url: $url")
                 curUrl = url
-                if (isTargetPage()) {
-                    bootNFC()
-                    rfidUtils.resume()
-                } else {
-                    closeNFC()
-                    rfidUtils.closeRfidRead()
+                if (!isTargetPage()) {
+                    releaseNfc()
+                    releaseRfid()
                 }
                 super.onPageFinished(view, url)
             }
