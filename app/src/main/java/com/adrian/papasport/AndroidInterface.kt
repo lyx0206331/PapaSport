@@ -39,6 +39,9 @@ class AndroidInterface(val context: Context, val agentWeb: AgentWeb, val jsListe
         }
     }
 
+    /**
+     * 扫描二维码
+     */
     @JavascriptInterface
     fun scanQRCode() {
         deliver.post {
@@ -46,6 +49,29 @@ class AndroidInterface(val context: Context, val agentWeb: AgentWeb, val jsListe
         }
     }
 
+    /**
+     * 打开NFC.识别会员卡
+     */
+    @JavascriptInterface
+    fun turnOnNFC() {
+        deliver.post {
+            jsListener.turnOnNFC()
+        }
+    }
+
+    /**
+     * 打开RFID.识别身份证
+     */
+    @JavascriptInterface
+    fun turnOnRFID() {
+        deliver.post {
+            jsListener.turnOnRFID()
+        }
+    }
+
+    /**
+     * 打印小票.内容来自web
+     */
     @JavascriptInterface
     fun printJsContent(content: String) {
         deliver.post {
@@ -56,5 +82,7 @@ class AndroidInterface(val context: Context, val agentWeb: AgentWeb, val jsListe
     interface IJsListener {
         fun printMsg(msg: String)
         fun startScan()
+        fun turnOnNFC()
+        fun turnOnRFID()
     }
 }

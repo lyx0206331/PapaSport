@@ -12,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.adrian.printmodule.PrintUtils;
 import com.adrian.printmodule.R;
 
@@ -179,7 +178,7 @@ public class ScanPrintAcivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-                        printUtil.ScanDomn();
+                        printUtil.scanDomn();
 					}
 				});
 

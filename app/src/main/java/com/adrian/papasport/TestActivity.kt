@@ -8,13 +8,14 @@ import android.media.MediaPlayer
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.os.Handler
 import android.posapi.PosApi
 import android.provider.Settings
+import android.view.LayoutInflater
 import com.adrian.basemodule.BaseActivity
 import com.adrian.basemodule.LogUtils
 import com.adrian.basemodule.ToastUtils.showToastShort
-import com.adrian.basemodule.orFalse
+import com.adrian.basemodule.invisibleView2Bitmap
+import com.adrian.basemodule.visibleView2Bitmap2
 import com.adrian.nfcmodule.NFCUtils
 import com.adrian.papasport.model.NFCTagInfo
 import com.adrian.printmodule.PrintUtils
@@ -47,11 +48,19 @@ class TestActivity : BaseActivity() {
         btnPrintText.setOnClickListener { scanPrintUtils.printText("asdfasdfasdf") }
         btnPrintQr.setOnClickListener { scanPrintUtils.printQRCode("assdasdffd") }
         btnPrintBar.setOnClickListener { scanPrintUtils.printBarCode("asdfasdffasd") }
-        btnScan.setOnClickListener { scanPrintUtils.ScanDomn() }
+        btnScan.setOnClickListener { scanPrintUtils.scanDomn() }
+        btnQrCodeTemplate.setOnClickListener {
+            val view = LayoutInflater.from(this).inflate(R.layout.layout_qr_template, null, false)
+            ivBitmap.setImageBitmap(view.invisibleView2Bitmap())
+        }
+        btnTicketTemplate.setOnClickListener {
+            val view = LayoutInflater.from(this).inflate(R.layout.layout_qr_template, null, false)
+            ivBitmap.setImageBitmap(view.visibleView2Bitmap2())
+        }
 
-        initNFC()
+//        initNFC()
 //        initRFID()
-        initScanPrint()
+//        initScanPrint()
     }
 
     /**
@@ -169,30 +178,30 @@ class TestActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (nfcAdapter == null) {
-            if (!nfcAdapter?.isEnabled.orFalse()) {
-                showWirelessSettingsDialog()
-            }
-
-            showMessage("error", " NO NFC")
-
-            showToastShort("设备不支持NFC！")
-
-            return
-        }
-        if (!nfcAdapter?.isEnabled.orFalse()) {
-            showToastShort("请在系统设置中先启用NFC功能！")
-            return
-        }
-        bootNFC()
-//        rfidUtils.resume()
-
-        // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
-        Handler().postDelayed({
-            // 打开GPIO，给扫描头上电
-            scanPrintUtils.openDevice()
-
-        }, 1000)
+//        if (nfcAdapter == null) {
+//            if (!nfcAdapter?.isEnabled.orFalse()) {
+//                showWirelessSettingsDialog()
+//            }
+//
+//            showMessage("error", " NO NFC")
+//
+//            showToastShort("设备不支持NFC！")
+//
+//            return
+//        }
+//        if (!nfcAdapter?.isEnabled.orFalse()) {
+//            showToastShort("请在系统设置中先启用NFC功能！")
+//            return
+//        }
+//        bootNFC()
+////        rfidUtils.resume()
+//
+//        // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
+//        Handler().postDelayed({
+//            // 打开GPIO，给扫描头上电
+//            scanPrintUtils.openDevice()
+//
+//        }, 1000)
     }
 
     /**
@@ -208,7 +217,7 @@ class TestActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        closeNFC()
+//        closeNFC()
 //        rfidUtils.closeRfidRead()
     }
 
@@ -224,14 +233,14 @@ class TestActivity : BaseActivity() {
 
     override fun onDestroy() {
 //        rfidUtils.release()
-        scanPrintUtils.release()
+//        scanPrintUtils.release()
         super.onDestroy()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        nfcUtils.resolveIntent(intent)
+//        nfcUtils.resolveIntent(intent)
     }
 
     private fun showMessage(title: String, message: String) {

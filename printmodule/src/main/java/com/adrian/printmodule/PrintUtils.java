@@ -64,7 +64,7 @@ public class PrintUtils {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
             //监听到SCAN按键按下广播，执行扫描
-            ScanDomn();
+            scanDomn();
         }
     }
 
@@ -362,7 +362,7 @@ public class PrintUtils {
     /**
      * 执行扫描，扫描后的结果会通过action为PosApi.ACTION_POS_COMM_STATUS的广播发回
      */
-    public void ScanDomn() {
+    public void scanDomn() {
         if (!isScan) {
             mPosSDK.gpioControl(mGpioTrig, 0, 0);
             isScan = true;

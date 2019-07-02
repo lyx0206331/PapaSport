@@ -294,6 +294,7 @@ class MainActivity : BaseWebActivity() {
 
     override fun getAndroidInterface(): AndroidInterface {
         return AndroidInterface(this, agentWeb, object : AndroidInterface.IJsListener {
+
             override fun printMsg(msg: String) {
 //                showToastShort(msg)
 //                val content = "asdfasdf\nasdfasdfa\n12342134\n-------------------\n12343    132414  asdf\n" +
@@ -312,7 +313,15 @@ class MainActivity : BaseWebActivity() {
             }
 
             override fun startScan() {
-                scanPrintUtils.ScanDomn()
+                scanPrintUtils.scanDomn()
+            }
+
+            override fun turnOnNFC() {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun turnOnRFID() {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         })
     }
