@@ -5,13 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="10dp"
     android:gravity="center"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvTicketName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="羽毛球早鸟票" />
+        android:background="@color/white"
+        tools:text="门票名称" />
 
     <View
         android:layout_width="match_parent"
@@ -25,12 +27,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:background="@color/white"
         tools:src="@mipmap/test_qr" />
 
     <TextView
         android:id="@+id/tvTicketNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="票号：182738172643812" />
+        android:background="@color/white"
+        tools:text="票号：**************" />
 
 </LinearLayout>

@@ -13,6 +13,7 @@ import android.posapi.PrintQueue;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
@@ -288,6 +289,44 @@ public class PrintUtils {
     }
 
     /**
+     * 打印二维码门票
+     *
+     * @param title
+     * @param ticketNum
+     */
+    public void printQrCodeTicket(String title, String ticketNum) {
+        if (TextUtils.isEmpty(ticketNum) || TextUtils.isEmpty(ticketNum)) {
+            return;
+        }
+
+        try {
+
+            // 二维码生成
+            btMap = encode2dAsBitmap(ticketNum, 300, 300, 2);
+
+            // 图片转成打印字节数组
+            byte[] printData = BitmapTools.bitmap2PrinterBytes(btMap);
+
+            mPrintQueue.addText(50, ("       " + title + "\n\n").getBytes("GBK"));
+
+            // 将打印数组添加到打印队列
+            mPrintQueue.addBmp(50, 50, btMap.getWidth(), btMap.getHeight(),
+                    printData);
+
+            mPrintQueue.addText(50, ("\n      票号：" + ticketNum).getBytes("GBK"));
+
+            // 打印6个空行，使二维码显示到打印头外面
+            mPrintQueue.addText(50, "\n\n\n\n\n\n".getBytes("GBK"));
+
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // 打印队列开始
+        mPrintQueue.printStart();
+    }
+
+    /**
      * 打印二维码
      */
     public void printQRCode(String msg) {
@@ -474,7 +513,7 @@ public class PrintUtils {
      * @param height
      * @return
      */
-    public static Bitmap Create2DCode(String str, int width, int height) {
+    public static Bitmap create2DCode(String str, int width, int height) {
         try {
             Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
             hints.put(EncodeHintType.CHARACTER_SET, "GBK");
