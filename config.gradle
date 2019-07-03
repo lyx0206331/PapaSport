@@ -12,6 +12,9 @@ ext {
             versionName                 : "0.0.1"
     ]
 
+    def KOTLIN_ANKO_VERSION = "0.10.8"
+    def FAST_JSON_VERSION = "1.1.71.android"
+
     def AGENT_WEB_VERSION = "4.0.3-beta"
 
     def LEAK_CANARY_VERSION = "2.0-alpha-2"
@@ -24,6 +27,9 @@ ext {
             androidAppCompatV7      : 'com.android.support:appcompat-v7:22.2.1',
             androidSupportV4        : 'com.android.support:support-v4:22.2.1',
             androidSupportDesign    : 'com.android.support:design:22.2.1',
+
+            kotlinAnko              : 'org.jetbrains.anko:anko:' + KOTLIN_ANKO_VERSION,
+            fastJson                : 'com.alibaba:fastjson:' + FAST_JSON_VERSION,
 
             smartRefreshLayout      : 'com.scwang.smartrefresh:SmartRefreshLayout:' + SMART_REFRESH_VERSION,
             smartRefreshHeader      : 'com.scwang.smartrefresh:SmartRefreshHeader:' + SMART_REFRESH_VERSION,

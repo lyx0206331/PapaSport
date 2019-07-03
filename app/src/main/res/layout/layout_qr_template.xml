@@ -2,19 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="10dp"
     android:gravity="center"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tvTicketName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="羽毛球早鸟票" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/darker_gray" />
+
     <ImageView
-        android:id="@+id/ivQrCode"
+        android:id="@+id/ivTicketQrCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:src="@mipmap/test_qr" />
+        tools:src="@mipmap/test_qr" />
 
     <TextView
+        android:id="@+id/tvTicketNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="票号：182738172643812" />
+        tools:text="票号：182738172643812" />
 
 </LinearLayout>

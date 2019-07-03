@@ -84,11 +84,9 @@ def releaseTime() {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api rootProject.ext.dependencies.agentWeb
 //    implementation rootProject.ext.dependencies.androidAppCompatV7
 //    implementation rootProject.ext.dependencies.androidSupportDesign

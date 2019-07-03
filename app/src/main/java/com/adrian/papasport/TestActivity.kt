@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.media.MediaPlayer
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.posapi.PosApi
 import android.provider.Settings
 import android.view.LayoutInflater
+import android.widget.TextView
 import com.adrian.basemodule.BaseActivity
 import com.adrian.basemodule.LogUtils
 import com.adrian.basemodule.ToastUtils.showToastShort
@@ -18,6 +20,7 @@ import com.adrian.basemodule.invisibleView2Bitmap
 import com.adrian.basemodule.visibleView2Bitmap2
 import com.adrian.nfcmodule.NFCUtils
 import com.adrian.papasport.model.NFCTagInfo
+import com.adrian.papasport.model.QrCodeTicketInfo
 import com.adrian.printmodule.PrintUtils
 import com.adrian.rfidmodule.IDCardInfo
 import com.adrian.rfidmodule.RFIDUtils
@@ -61,6 +64,13 @@ class TestActivity : BaseActivity() {
 //        initNFC()
 //        initRFID()
 //        initScanPrint()
+    }
+
+    private fun getQrCodeTicketPic(): Bitmap? {
+        var qrCodeTicketInfo = QrCodeTicketInfo("羽毛球早鸟票", "654121984312158")
+        val view = LayoutInflater.from(this).inflate(R.layout.layout_qr_template, null, false)
+        (view.findViewById(R.id.tvTicketName) as TextView).text = qrCodeTicketInfo.ticketName
+        return view.invisibleView2Bitmap()
     }
 
     /**
