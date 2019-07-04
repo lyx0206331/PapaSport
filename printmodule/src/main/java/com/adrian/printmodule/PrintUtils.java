@@ -23,6 +23,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import org.jetbrains.annotations.NotNull;
 import qs.util.BarcodeCreater;
 import qs.util.BitmapTools;
 
@@ -289,34 +290,56 @@ public class PrintUtils {
     }
 
     /**
+     * 打印支付凭证
+     *
+     * @param paymentVoucherInfo
+     */
+    public void printPaymentVoucher(@NotNull PaymentVoucherInfo paymentVoucherInfo) {
+        PrintQueue.TextData titleData = mPrintQueue.new TextData();
+        titleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
+        titleData.addText(paymentVoucherInfo.getFieldName());
+        mPrintQueue.addText(30, titleData);
+    }
+
+    /**
      * 打印二维码门票
      *
-     * @param title
-     * @param ticketNum
+     * @param qrCodeTicketInfo
      */
-    public void printQrCodeTicket(String title, String ticketNum) {
-        if (TextUtils.isEmpty(ticketNum) || TextUtils.isEmpty(ticketNum)) {
+    public void printQrCodeTicket(@NotNull QrCodeTicketInfo qrCodeTicketInfo) {
+        if (TextUtils.isEmpty(qrCodeTicketInfo.getTicketNum()) || TextUtils.isEmpty(qrCodeTicketInfo.getTicketName())) {
             return;
         }
 
         try {
 
             // 二维码生成
-            btMap = encode2dAsBitmap(ticketNum, 300, 300, 2);
+            btMap = encode2dAsBitmap(qrCodeTicketInfo.getTicketNum(), 300, 300, 2);
 
             // 图片转成打印字节数组
             byte[] printData = BitmapTools.bitmap2PrinterBytes(btMap);
 
-            mPrintQueue.addText(50, ("       " + title + "\n\n").getBytes("GBK"));
+            PrintQueue.TextData titleData = mPrintQueue.new TextData();
+            titleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
+            titleData.addText(qrCodeTicketInfo.getTicketName() + "\n");
+            mPrintQueue.addText(30, titleData);
+
+            PrintQueue.TextData dividerData = mPrintQueue.new TextData();
+            dividerData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
+            dividerData.addText("     ----------------------\n\n");
+            mPrintQueue.addText(30, dividerData);
 
             // 将打印数组添加到打印队列
             mPrintQueue.addBmp(50, 50, btMap.getWidth(), btMap.getHeight(),
                     printData);
 
-            mPrintQueue.addText(50, ("\n      票号：" + ticketNum).getBytes("GBK"));
-
+            PrintQueue.TextData numData = mPrintQueue.new TextData();
+            numData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
+            numData.addText("\n票号：" + qrCodeTicketInfo.getTicketNum());
+            mPrintQueue.addText(30, numData);
+//
             // 打印6个空行，使二维码显示到打印头外面
-            mPrintQueue.addText(50, "\n\n\n\n\n\n".getBytes("GBK"));
+            mPrintQueue.addText(50, "\n\n\n".getBytes("GBK"));
 
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block

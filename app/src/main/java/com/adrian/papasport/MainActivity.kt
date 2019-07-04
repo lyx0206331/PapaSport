@@ -30,6 +30,7 @@ import com.adrian.papasport.view.SmartRefreshWebLayout
 import com.adrian.printmodule.PrintUtils
 import com.adrian.rfidmodule.IDCardInfo
 import com.adrian.rfidmodule.RFIDUtils
+import com.alibaba.fastjson.JSON
 import com.just.agentweb.*
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import kotlinx.android.synthetic.main.activity_base_web.*
@@ -420,9 +421,11 @@ class MainActivity : BaseWebActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 logE(TAG, "onPageFinished. url: $url")
                 if (url?.endsWith("login").orFalse()) {
+                    val deviceInfoJson = JSON.toJSONString(DeviceInfo(PhoneUtils.getImeiNum()))
+                    logE(TAG, deviceInfoJson)
                     agentWeb.jsAccessEntrace.quickCallJs(
                         "getImei",
-                        DeviceInfo(PhoneUtils.getImeiNum()).toJsonString()
+                        deviceInfoJson
                     )
                 }
                 curUrl = url

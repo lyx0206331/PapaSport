@@ -1,19 +1,19 @@
-package com.adrian.papasport.model
+package com.adrian.printmodule
 
 /**
  * date:2019/7/3 9:56
  * author:RanQing
  * description:
  */
-class BasePrintModel(
-    var type: Int, //打印类型.1-门票;2-支付凭证
-    var content: String    //打印内容.门票或者支付凭证内容
+data class BasePrintModel(
+    var type: Int = 0, //打印类型.1-门票;2-支付凭证
+    var content: String = ""   //打印内容.门票或者支付凭证内容
 ) {
-    constructor() : this(0, "")
+//    constructor() : this(0, "")
 
-    override fun toString(): String {
-        return "[type:$type, content:$content]"
-    }
+//    override fun toString(): String {
+//        return "[type:$type, content:$content]"
+//    }
 }
 
 /**
@@ -23,11 +23,11 @@ class QrCodeTicketInfo(
     var ticketName: String? = null,  //门票名称
     var ticketNum: String? = null    //门票编号
 ) {
-    constructor() : this(null, null)
+//    constructor() : this(null, null)
 
-    override fun toString(): String {
-        return "[ticketName:$ticketName, ticketNum:$ticketNum]"
-    }
+//    override fun toString(): String {
+//        return "[ticketName:$ticketName, ticketNum:$ticketNum]"
+//    }
 }
 
 /**
@@ -44,12 +44,12 @@ class PaymentVoucherInfo(
     var payType: String? = null,       //支付方式
     var payTime: String? = null        //支付时间
 ) {
-    constructor() : this(null, null, null, null, null, null, null, null, null)
+//    constructor() : this(null, null, null, null, null, null, null, null, null)
 
-    override fun toString(): String {
-        return "[fieldName:$fieldName, consumeType:$consumeType, consumeAddr:$consumeAddr, printTime:$printTime, " +
-                "ticketList:${ticketList.toString()}, total:$total, offer:$offer, payType:$payType, payTime:$payTime]"
-    }
+//    override fun toString(): String {
+//        return "[fieldName:$fieldName, consumeType:$consumeType, consumeAddr:$consumeAddr, printTime:$printTime, " +
+//                "ticketList:${ticketList.toString()}, total:$total, offer:$offer, payType:$payType, payTime:$payTime]"
+//    }
 }
 
 /**
@@ -60,5 +60,5 @@ class TicketBrief(
     var price: String? = null, //单价
     var count: String? = null      //数量
 ) {
-    constructor() : this(null, null, null)
+//    constructor() : this(null, null, null)
 }

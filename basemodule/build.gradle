@@ -30,6 +30,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 //    api rootProject.ext.dependencies.kotlinAnko
     api rootProject.ext.dependencies.androidAppCompatV7
     api rootProject.ext.dependencies.androidSupportDesign
