@@ -20,9 +20,11 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.FrameLayout
 import com.adrian.basemodule.LogUtils.logE
+import com.adrian.basemodule.PhoneUtils
 import com.adrian.basemodule.ToastUtils.showToastShort
 import com.adrian.basemodule.orFalse
 import com.adrian.nfcmodule.NFCUtils
+import com.adrian.papasport.model.DeviceInfo
 import com.adrian.papasport.model.NFCTagInfo
 import com.adrian.papasport.view.SmartRefreshWebLayout
 import com.adrian.printmodule.PrintUtils
@@ -358,14 +360,14 @@ class MainActivity : BaseWebActivity() {
             }
 
             override fun turnOnNFC() {
-                if (isTargetPage()) {
+                if (isDiscernUserPage()) {
                     releaseRfid()
                     resetNfc()
                 }
             }
 
             override fun turnOnRFID() {
-                if (isTargetPage()) {
+                if (isDiscernUserPage()) {
                     releaseNfc()
                     resetRfid()
                 }
@@ -417,8 +419,14 @@ class MainActivity : BaseWebActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 logE(TAG, "onPageFinished. url: $url")
+                if (url?.endsWith("login").orFalse()) {
+                    agentWeb.jsAccessEntrace.quickCallJs(
+                        "getImei",
+                        DeviceInfo(PhoneUtils.getImeiNum()).toJsonString()
+                    )
+                }
                 curUrl = url
-                if (!isTargetPage()) {
+                if (!isDiscernUserPage()) {
                     releaseNfc()
                     releaseRfid()
                 }
@@ -427,7 +435,10 @@ class MainActivity : BaseWebActivity() {
         }
     }
 
-    private fun isTargetPage(): Boolean {
+    /**
+     * 判断识别用户界面。身份证，扫码，会员卡
+     */
+    private fun isDiscernUserPage(): Boolean {
         return curUrl?.endsWith(pageTag).orFalse()
     }
 

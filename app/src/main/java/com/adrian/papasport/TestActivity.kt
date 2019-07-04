@@ -9,7 +9,6 @@ import android.media.MediaPlayer
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.os.Handler
 import android.posapi.PosApi
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -18,13 +17,11 @@ import android.widget.TextView
 import com.adrian.basemodule.BaseActivity
 import com.adrian.basemodule.LogUtils
 import com.adrian.basemodule.LogUtils.logE
+import com.adrian.basemodule.PhoneUtils
 import com.adrian.basemodule.ToastUtils.showToastShort
 import com.adrian.basemodule.invisibleView2Bitmap
 import com.adrian.nfcmodule.NFCUtils
-import com.adrian.papasport.model.NFCTagInfo
-import com.adrian.papasport.model.PaymentVoucherInfo
-import com.adrian.papasport.model.QrCodeTicketInfo
-import com.adrian.papasport.model.TicketBrief
+import com.adrian.papasport.model.*
 import com.adrian.printmodule.PrintUtils
 import com.adrian.rfidmodule.IDCardInfo
 import com.adrian.rfidmodule.RFIDUtils
@@ -59,7 +56,7 @@ class TestActivity : BaseActivity() {
         btnScan.setOnClickListener { scanPrintUtils.scanDomn() }
         btnQrCodeTemplate.setOnClickListener {
             ivBitmap.setImageBitmap(getQrCodeTicketPic())
-            scanPrintUtils.printQrCodeTicket("羽毛球早鸟票", "654121984312158")
+//            scanPrintUtils.printQrCodeTicket("羽毛球早鸟票", "654121984312158")
         }
         btnTicketTemplate.setOnClickListener {
             testDataModel()
@@ -67,16 +64,25 @@ class TestActivity : BaseActivity() {
 
 //        initNFC()
 //        initRFID()
-        initScanPrint()
+//        initScanPrint()
     }
 
     private fun testDataModel() {
+        val qrCodeTicketInfo = QrCodeTicketInfo("羽毛球早鸟票", "654121984312158")
+        logE("DATAMODEL0", JSON.toJSONString(qrCodeTicketInfo))
+        val printModel = BasePrintModel(1, JSON.toJSONString(qrCodeTicketInfo))
+        val printJson = JSON.toJSONString(printModel)
+        logE("DATAMODEL1", printJson)
+        logE("DATAMODEL2", JSON.parseObject(printJson, BasePrintModel::class.java).toString())
+
         val paymentVoucherInfo = PaymentVoucherInfo(
             "场地名称", "消费类型", "消费地址", "打印时间",
             arrayListOf(TicketBrief("项目一", "12.00", "2"), TicketBrief("项目二", "16.00", "1")), "40.00",
             "0.00", "支付方式", "支付时间"
         )
-        logE("DATAMODEL", JSON.toJSONString(paymentVoucherInfo))
+        logE("DATAMODEL3", JSON.toJSONString(paymentVoucherInfo))
+
+        logE("DATAMODEL4", PhoneUtils.getImeiNum())
     }
 
     private fun getQrCodeTicketPic(): Bitmap? {
@@ -223,11 +229,11 @@ class TestActivity : BaseActivity() {
 ////        rfidUtils.resume()
 //
         // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
-        Handler().postDelayed({
-            // 打开GPIO，给扫描头上电
-            scanPrintUtils.openDevice()
-
-        }, 1000)
+//        Handler().postDelayed({
+//            // 打开GPIO，给扫描头上电
+//            scanPrintUtils.openDevice()
+//
+//        }, 1000)
     }
 
     /**
@@ -259,7 +265,7 @@ class TestActivity : BaseActivity() {
 
     override fun onDestroy() {
 //        rfidUtils.release()
-        scanPrintUtils.release()
+//        scanPrintUtils.release()
         super.onDestroy()
     }
 
