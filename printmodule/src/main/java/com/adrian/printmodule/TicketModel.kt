@@ -50,6 +50,24 @@ class PaymentVoucherInfo(
 //        return "[fieldName:$fieldName, consumeType:$consumeType, consumeAddr:$consumeAddr, printTime:$printTime, " +
 //                "ticketList:${ticketList.toString()}, total:$total, offer:$offer, payType:$payType, payTime:$payTime]"
 //    }
+
+    fun getPrintContent(): String {
+        val sb = StringBuilder()
+        sb.append("----------------------\n")
+        sb.append("消费类型     $consumeType\n")
+        sb.append("消费地点     $consumeAddr\n")
+        sb.append("打印时间     $printTime\n")
+        sb.append("----------------------\n")
+        ticketList?.forEach {
+            sb.append("${it.name}    ￥${it.price}    X${it.count}\n")
+        }
+        sb.append("合计       ￥$total\n")
+        sb.append("优惠减扣     ￥$offer\n")
+        sb.append("支付方式     $payType\n")
+        sb.append("支付时间     $payTime\n\n\n")
+
+        return sb.toString()
+    }
 }
 
 /**

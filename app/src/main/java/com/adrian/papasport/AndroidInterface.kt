@@ -5,9 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.webkit.JavascriptInterface
-import com.adrian.basemodule.PhoneUtils
-import com.adrian.papasport.model.DeviceInfo
-import com.alibaba.fastjson.JSON
 import com.just.agentweb.AgentWeb
 
 /**
@@ -80,14 +77,6 @@ class AndroidInterface(val context: Context, val agentWeb: AgentWeb, val jsListe
         deliver.post {
             jsListener.printMsg(content)
         }
-    }
-
-    /**
-     * 获取IMEI号
-     */
-    @JavascriptInterface
-    fun getImei(): String {
-        return JSON.toJSONString(DeviceInfo(PhoneUtils.getImeiNum()))
     }
 
     interface IJsListener {

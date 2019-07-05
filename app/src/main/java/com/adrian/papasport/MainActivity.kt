@@ -13,7 +13,6 @@ import android.os.Handler
 import android.posapi.PosApi
 import android.provider.Settings
 import android.support.v4.content.ContextCompat
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
@@ -27,14 +26,16 @@ import com.adrian.nfcmodule.NFCUtils
 import com.adrian.papasport.model.DeviceInfo
 import com.adrian.papasport.model.NFCTagInfo
 import com.adrian.papasport.view.SmartRefreshWebLayout
+import com.adrian.printmodule.BasePrintModel
+import com.adrian.printmodule.PaymentVoucherInfo
 import com.adrian.printmodule.PrintUtils
+import com.adrian.printmodule.QrCodeTicketInfo
 import com.adrian.rfidmodule.IDCardInfo
 import com.adrian.rfidmodule.RFIDUtils
 import com.alibaba.fastjson.JSON
 import com.just.agentweb.*
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import kotlinx.android.synthetic.main.activity_base_web.*
-import org.json.JSONObject
 import java.util.*
 
 class MainActivity : BaseWebActivity() {
@@ -339,21 +340,31 @@ class MainActivity : BaseWebActivity() {
 //                showToastShort(msg)
 //                val content = "asdfasdf\nasdfasdfa\n12342134\n-------------------\n12343    132414  asdf\n" +
 //                        "================="
-                val jsonObj = JSONObject(msg)
-                val type = jsonObj.optInt("type")
-                val content = jsonObj.optString("content")
-                when (type) {
-                    0 -> showToastShort(content)
+//                val jsonObj = JSONObject(msg)
+//                val type = jsonObj.optInt("type")
+//                val content = jsonObj.optString("content")
+                val printModel = JSON.parseObject(msg, BasePrintModel::class.java)
+                when (printModel.type) {
+                    0 -> showToastShort(printModel.content)
                     //门票
                     1 -> {
-                        val view =
-                            LayoutInflater.from(this@MainActivity).inflate(R.layout.layout_qr_template, null, false)
-//                        ivBitmap.setImageBitmap(view.invisibleView2Bitmap())
+                        scanPrintUtils.printQrCodeTicket(
+                            JSON.parseObject(
+                                printModel.content,
+                                QrCodeTicketInfo::class.java
+                            )
+                        )
                     }
                     //支付凭证
-                    2 -> ""
+                    2 -> {
+                        scanPrintUtils.printPaymentVoucher(
+                            JSON.parseObject(
+                                printModel.content,
+                                PaymentVoucherInfo::class.java
+                            )
+                        )
+                    }
                 }
-                scanPrintUtils.printText(content)
             }
 
             override fun startScan() {

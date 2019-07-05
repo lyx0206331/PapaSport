@@ -299,6 +299,13 @@ public class PrintUtils {
         titleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
         titleData.addText(paymentVoucherInfo.getFieldName());
         mPrintQueue.addText(30, titleData);
+
+        PrintQueue.TextData dividerData = mPrintQueue.new TextData();
+        dividerData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
+        dividerData.addText(paymentVoucherInfo.getPrintContent());
+        mPrintQueue.addText(30, dividerData);
+
+        mPrintQueue.printStart();
     }
 
     /**
@@ -321,12 +328,12 @@ public class PrintUtils {
 
             PrintQueue.TextData titleData = mPrintQueue.new TextData();
             titleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
-            titleData.addText(qrCodeTicketInfo.getTicketName() + "\n");
+            titleData.addText(qrCodeTicketInfo.getTicketName());
             mPrintQueue.addText(30, titleData);
 
             PrintQueue.TextData dividerData = mPrintQueue.new TextData();
             dividerData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
-            dividerData.addText("     ----------------------\n\n");
+            dividerData.addText("\n     ----------------------\n");
             mPrintQueue.addText(30, dividerData);
 
             // 将打印数组添加到打印队列
