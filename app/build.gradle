@@ -15,6 +15,7 @@ android {
         versionName rootProject.ext.android.versionName
 
         flavorDimensions "default"
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -87,6 +88,11 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    implementation(rootProject.ext.dependencies.kotlinAnko) {
+        exclude group: "com.android.support"
+    }
+    annotationProcessor rootProject.ext.dependencies.kotlinAnko
     api rootProject.ext.dependencies.agentWeb
     implementation rootProject.ext.dependencies.fastJson
 //    implementation rootProject.ext.dependencies.androidAppCompatV7
@@ -95,6 +101,7 @@ dependencies {
     implementation rootProject.ext.dependencies.tencentSonic
     implementation rootProject.ext.dependencies.smartRefreshLayout
     implementation rootProject.ext.dependencies.smartRefreshHeader
+    implementation 'com.android.support:multidex:1.0.3'
 
     implementation project(":basemodule")
     if (rootProject.ext.isModule) {

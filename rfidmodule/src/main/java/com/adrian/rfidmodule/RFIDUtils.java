@@ -288,6 +288,7 @@ public class RFIDUtils {
         //拉低53口电压，断开对身份证模块的供电
         mCommonApi.setGpioOut(53, 0);
 //			Toast.makeText(getApplicationContext(), "退出", 0).show();
+        //关闭身份证识别时候，GPIO68置低的代码不要执行.即执行下面两行代码时，会阻塞摄像头启动
         mCommonApi.setGpioDir(68, 1);
         mCommonApi.setGpioOut(68, 0);
         //关闭mCommonApi类

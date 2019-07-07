@@ -60,12 +60,32 @@ class AndroidInterface(val context: Context, val agentWeb: AgentWeb, val jsListe
     }
 
     /**
+     * 关闭NFC.识别会员卡
+     */
+    @JavascriptInterface
+    fun turnOffNFC() {
+        deliver.post {
+            jsListener.turnOffNFC()
+        }
+    }
+
+    /**
      * 打开RFID.识别身份证
      */
     @JavascriptInterface
     fun turnOnRFID() {
         deliver.post {
             jsListener.turnOnRFID()
+        }
+    }
+
+    /**
+     * 关闭RFID.识别身份证
+     */
+    @JavascriptInterface
+    fun turnOffRFID() {
+        deliver.post {
+            jsListener.turnOffRFID()
         }
     }
 
@@ -83,6 +103,8 @@ class AndroidInterface(val context: Context, val agentWeb: AgentWeb, val jsListe
         fun printMsg(msg: String)
         fun startScan()
         fun turnOnNFC()
+        fun turnOffNFC()
         fun turnOnRFID()
+        fun turnOffRFID()
     }
 }

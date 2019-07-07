@@ -289,6 +289,65 @@ public class PrintUtils {
 
     }
 
+    public void print(PrintInfo printInfo) {
+        if (printInfo == null || (printInfo.getPayInfo() == null && printInfo.getTicketInfo() == null)) {
+            return;
+        }
+        if (printInfo.getPayInfo() != null) {
+            PrintQueue.TextData payTitleData = mPrintQueue.new TextData();
+            payTitleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
+            payTitleData.addText(printInfo.getPayInfo().getFieldName());
+            mPrintQueue.addText(30, payTitleData);
+
+            PrintQueue.TextData bodyData = mPrintQueue.new TextData();
+            bodyData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
+            bodyData.addText(printInfo.getPayInfo().getPrintContent());
+            mPrintQueue.addText(30, bodyData);
+        }
+
+        if (printInfo.getTicketInfo() != null && printInfo.getTicketInfo().size() > 0) {
+            for (QrCodeTicketInfo qrInfo :
+                    printInfo.getTicketInfo()) {
+                try {
+
+                    // 二维码生成
+                    Bitmap btMap = encode2dAsBitmap(qrInfo.getTicketNum(), 300, 300, 2);
+
+                    // 图片转成打印字节数组
+                    byte[] printData = BitmapTools.bitmap2PrinterBytes(btMap);
+
+                    PrintQueue.TextData titleData = mPrintQueue.new TextData();
+                    titleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
+                    titleData.addText(qrInfo.getTicketName());
+                    mPrintQueue.addText(30, titleData);
+
+                    PrintQueue.TextData dividerData = mPrintQueue.new TextData();
+                    dividerData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
+                    dividerData.addText("\n     ----------------------\n");
+                    mPrintQueue.addText(30, dividerData);
+
+                    // 将打印数组添加到打印队列
+                    mPrintQueue.addBmp(50, 50, btMap.getWidth(), btMap.getHeight(),
+                            printData);
+
+                    PrintQueue.TextData numData = mPrintQueue.new TextData();
+                    numData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
+                    numData.addText("\n票号：" + qrInfo.getTicketNum());
+                    mPrintQueue.addText(30, numData);
+//
+                    // 打印6个空行，使二维码显示到打印头外面
+                    mPrintQueue.addText(50, "\n\n\n".getBytes("GBK"));
+
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        // 打印队列开始
+        mPrintQueue.printStart();
+    }
+
     /**
      * 打印支付凭证
      *
@@ -300,10 +359,10 @@ public class PrintUtils {
         titleData.addText(paymentVoucherInfo.getFieldName());
         mPrintQueue.addText(30, titleData);
 
-        PrintQueue.TextData dividerData = mPrintQueue.new TextData();
-        dividerData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
-        dividerData.addText(paymentVoucherInfo.getPrintContent());
-        mPrintQueue.addText(30, dividerData);
+        PrintQueue.TextData bodyData = mPrintQueue.new TextData();
+        bodyData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
+        bodyData.addText(paymentVoucherInfo.getPrintContent());
+        mPrintQueue.addText(30, bodyData);
 
         mPrintQueue.printStart();
     }

@@ -1,6 +1,8 @@
 package com.adrian.papasport.application
 
+import android.content.Context
 import android.content.MutableContextWrapper
+import android.support.multidex.MultiDex
 import android.webkit.WebView
 import com.adrian.basemodule.BaseApplication
 
@@ -11,6 +13,10 @@ import com.adrian.basemodule.BaseApplication
  **/
 class MyApplication : BaseApplication() {
 
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
+    }
 
     override fun onCreate() {
         super.onCreate()

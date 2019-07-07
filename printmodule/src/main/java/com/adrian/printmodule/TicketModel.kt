@@ -1,5 +1,8 @@
 package com.adrian.printmodule
 
+import java.text.SimpleDateFormat
+import java.util.*
+
 /**
  * date:2019/7/3 9:56
  * author:RanQing
@@ -15,6 +18,11 @@ data class BasePrintModel(
 //        return "[type:$type, content:$content]"
 //    }
 }
+
+class PrintInfo(
+    var payInfo: PaymentVoucherInfo? = null,
+    var ticketInfo: List<QrCodeTicketInfo>? = null
+)
 
 /**
  * 二维码门票信息
@@ -42,7 +50,8 @@ class PaymentVoucherInfo(
     var total: String? = null,          //合计价格
     var offer: String? = null,          //优惠减扣
     var payType: String? = null,       //支付方式
-    var payTime: String? = null        //支付时间
+    var payTime: String? = null,        //支付时间
+    var remark: String? = null          //小票备注
 ) {
 //    constructor() : this(null, null, null, null, null, null, null, null, null)
 
@@ -51,20 +60,27 @@ class PaymentVoucherInfo(
 //                "ticketList:${ticketList.toString()}, total:$total, offer:$offer, payType:$payType, payTime:$payTime]"
 //    }
 
+    private fun formatPrintTime(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        return dateFormat.format(Date())
+    }
+
     fun getPrintContent(): String {
         val sb = StringBuilder()
-        sb.append("----------------------\n")
-        sb.append("消费类型     $consumeType\n")
-        sb.append("消费地点     $consumeAddr\n")
-        sb.append("打印时间     $printTime\n")
-        sb.append("----------------------\n")
+        sb.append("---------------------------\n")
+        sb.append("消费类型\t$consumeType\n")
+        sb.append("消费地点\t$consumeAddr\n")
+        sb.append("打印时间\t${formatPrintTime()}\n")
+        sb.append("---------------------------\n")
         ticketList?.forEach {
-            sb.append("${it.name}    ￥${it.price}    X${it.count}\n")
+            sb.append("${it.name}\t${it.price}元\tX${it.count}\n")
         }
-        sb.append("合计       ￥$total\n")
-        sb.append("优惠减扣     ￥$offer\n")
-        sb.append("支付方式     $payType\n")
-        sb.append("支付时间     $payTime\n\n\n")
+        sb.append("合计\t${total}元\n")
+        sb.append("优惠减扣\t${offer}元\n")
+        sb.append("支付方式\t$payType\n")
+        sb.append("支付时间\t$payTime\n")
+        sb.append("---------------------------\n")
+        sb.append("小票备注：$remark\n\n\n")
 
         return sb.toString()
     }

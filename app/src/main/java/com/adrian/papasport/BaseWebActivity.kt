@@ -60,6 +60,9 @@ abstract class BaseWebActivity : BaseActivity() {
             .ready()
             .go(getUrl())
 
+        //处理下拉刷新控件与webview滚动的冲突问题n
+        agentWeb.webCreator.webView.overScrollMode = WebView.OVER_SCROLL_NEVER
+
         // 得到 AgentWeb 最底层的控件
         addBGChild(agentWeb.webCreator.webParentLayout)
 

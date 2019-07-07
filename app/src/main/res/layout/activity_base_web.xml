@@ -23,6 +23,15 @@
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnQuit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_gravity="right"
+            android:visibility="gone"
+            android:text="@string/quit" />
     </android.support.v7.widget.Toolbar>
 
 </LinearLayout>

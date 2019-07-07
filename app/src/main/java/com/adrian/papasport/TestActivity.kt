@@ -80,8 +80,9 @@ class TestActivity : BaseActivity() {
         val paymentVoucherInfo = PaymentVoucherInfo(
             "场地名称", "消费类型", "消费地址", "打印时间",
             arrayListOf(TicketBrief("项目一", "12.00", "2"), TicketBrief("项目二", "16.00", "1")), "40.00",
-            "0.00", "支付方式", "支付时间"
+            "0.00", "支付方式", "支付时间", "读取后台的小票备注"
         )
+        scanPrintUtils.printPaymentVoucher(paymentVoucherInfo)
         logE("DATAMODEL3", JSON.toJSONString(paymentVoucherInfo))
 
         logE("DATAMODEL4", JSON.toJSONString(DeviceInfo(PhoneUtils.getImeiNum())))

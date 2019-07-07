@@ -13,6 +13,7 @@ import android.os.Handler
 import android.posapi.PosApi
 import android.provider.Settings
 import android.support.v4.content.ContextCompat
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
@@ -26,16 +27,15 @@ import com.adrian.nfcmodule.NFCUtils
 import com.adrian.papasport.model.DeviceInfo
 import com.adrian.papasport.model.NFCTagInfo
 import com.adrian.papasport.view.SmartRefreshWebLayout
-import com.adrian.printmodule.BasePrintModel
-import com.adrian.printmodule.PaymentVoucherInfo
+import com.adrian.printmodule.PrintInfo
 import com.adrian.printmodule.PrintUtils
-import com.adrian.printmodule.QrCodeTicketInfo
 import com.adrian.rfidmodule.IDCardInfo
 import com.adrian.rfidmodule.RFIDUtils
 import com.alibaba.fastjson.JSON
 import com.just.agentweb.*
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import kotlinx.android.synthetic.main.activity_base_web.*
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import java.util.*
 
 class MainActivity : BaseWebActivity() {
@@ -45,17 +45,18 @@ class MainActivity : BaseWebActivity() {
     private var ndefPushMessage: NdefMessage? = null
     private lateinit var nfcDialog: AlertDialog
 
-    private lateinit var nfcUtils: NFCUtils
+    private var nfcUtils: NFCUtils? = null
     private var curUrl: String? = null
     private var pageTag: String = "memberSearch"
 
-    private lateinit var rfidUtils: RFIDUtils
+    private var rfidUtils: RFIDUtils? = null
     private val player by lazy { MediaPlayer.create(this, R.raw.success) }
 
-    private lateinit var scanPrintUtils: PrintUtils
+    private var scanPrintUtils: PrintUtils? = null
 
     private var isNfcOpen = false
     private var isRfidOpen = false
+    private var isPrintOpen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,12 @@ class MainActivity : BaseWebActivity() {
         toolbar.navigationIcon = ContextCompat.getDrawable(this, R.mipmap.back)
 
 //        toolbar.visibility = View.GONE
+
+        btnQuit.onClick {
+            agentWeb.jsAccessEntrace.quickCallJs(
+                "signOut"
+            )
+        }
 
 //        initNFC()
 //        initRFID()
@@ -149,7 +156,7 @@ class MainActivity : BaseWebActivity() {
             }
         })
 
-        rfidUtils.isOpen = true
+        rfidUtils?.isOpen = true
     }
 
     /**
@@ -171,7 +178,7 @@ class MainActivity : BaseWebActivity() {
             }
         })
 
-        nfcUtils.resolveIntent(intent)
+//        nfcUtils?.resolveIntent(intent)
 
         nfcDialog = AlertDialog.Builder(this).setNeutralButton("Ok", null)
             .create()
@@ -187,7 +194,7 @@ class MainActivity : BaseWebActivity() {
         )
         ndefPushMessage = NdefMessage(
             arrayOf(
-                nfcUtils.newTextRecord(
+                nfcUtils?.newTextRecord(
                     "",
                     Locale.ENGLISH, true
                 )
@@ -208,6 +215,8 @@ class MainActivity : BaseWebActivity() {
     private fun releaseNfc() {
         if (isNfcOpen) {
             closeNFC()
+            nfcAdapter = null
+            nfcUtils = null
             isNfcOpen = false
         }
     }
@@ -215,15 +224,29 @@ class MainActivity : BaseWebActivity() {
     private fun resetRfid() {
         if (!isRfidOpen) {
             initRFID()
-            rfidUtils.resume()
+            rfidUtils?.resume()
             isRfidOpen = true
         }
     }
 
     private fun releaseRfid() {
         if (isRfidOpen) {
-            rfidUtils.release()
+            rfidUtils?.release()
             isRfidOpen = false
+        }
+    }
+
+    private fun resetPrint() {
+        if (!isPrintOpen) {
+            scanPrintUtils?.openDevice()
+            isPrintOpen = true
+        }
+    }
+
+    private fun releasePrint() {
+        if (isPrintOpen) {
+            scanPrintUtils?.release()
+            isPrintOpen = false
         }
     }
 
@@ -239,7 +262,7 @@ class MainActivity : BaseWebActivity() {
         // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
         Handler().postDelayed({
             // 打开GPIO，给扫描头上电
-            scanPrintUtils.openDevice()
+            scanPrintUtils?.openDevice()
 
         }, 1000)
     }
@@ -292,14 +315,14 @@ class MainActivity : BaseWebActivity() {
 
     override fun onDestroy() {
 //        rfidUtils.release()
-        scanPrintUtils.release()
+        scanPrintUtils?.release()
         super.onDestroy()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        nfcUtils.resolveIntent(intent)
+        nfcUtils?.resolveIntent(intent)
     }
 
     private fun showMessage(title: String, message: String) {
@@ -337,52 +360,58 @@ class MainActivity : BaseWebActivity() {
         return AndroidInterface(this, agentWeb, object : AndroidInterface.IJsListener {
 
             override fun printMsg(msg: String) {
-//                showToastShort(msg)
-//                val content = "asdfasdf\nasdfasdfa\n12342134\n-------------------\n12343    132414  asdf\n" +
-//                        "================="
-//                val jsonObj = JSONObject(msg)
-//                val type = jsonObj.optInt("type")
-//                val content = jsonObj.optString("content")
-                val printModel = JSON.parseObject(msg, BasePrintModel::class.java)
-                when (printModel.type) {
-                    0 -> showToastShort(printModel.content)
-                    //门票
-                    1 -> {
-                        scanPrintUtils.printQrCodeTicket(
-                            JSON.parseObject(
-                                printModel.content,
-                                QrCodeTicketInfo::class.java
-                            )
-                        )
-                    }
-                    //支付凭证
-                    2 -> {
-                        scanPrintUtils.printPaymentVoucher(
-                            JSON.parseObject(
-                                printModel.content,
-                                PaymentVoucherInfo::class.java
-                            )
-                        )
-                    }
+//                val printModel = JSON.parseObject(msg, BasePrintModel::class.java)
+//                when (printModel.type) {
+//                    0 -> showToastShort(printModel.content)
+//                    //门票
+//                    1 -> {
+//                        scanPrintUtils?.printQrCodeTicket(
+//                            JSON.parseObject(
+//                                printModel.content,
+//                                QrCodeTicketInfo::class.java
+//                            )
+//                        )
+//                    }
+//                    //支付凭证
+//                    2 -> {
+//                        scanPrintUtils?.printPaymentVoucher(
+//                            JSON.parseObject(
+//                                printModel.content,
+//                                PaymentVoucherInfo::class.java
+//                            )
+//                        )
+//                    }
+//                }
+                try {
+//                    val test = "{\"payInfo\":{\"consumeAddr\":\"啪啪运动第一运动公园\",\"consumeType\":\"门票\",\"fieldName\":\"啪啪运动第一运动公园\",\"printTime\":\"\",\"total\":\"0.03\",\"offer\":\"0.03\",\"payType\":\"现金\",\"payTime\":\"2019-07-06 16:39:43\",\"ticketList\":[{\"count\":\"1\",\"name\":\"游泳日票\",\"price\":\"0.01\"},{\"count\":\"1\",\"name\":\"大熊测试\",\"price\":\"0.02\"}],\"remark\":\"\"},\"ticketInfo\":[]}"
+                    val printInfo = JSON.parseObject(msg, PrintInfo::class.java)
+                    scanPrintUtils?.print(printInfo)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    showToastShort("数据解析异常")
                 }
             }
 
             override fun startScan() {
-                scanPrintUtils.scanDomn()
+                scanPrintUtils?.scanDomn()
             }
 
             override fun turnOnNFC() {
-                if (isDiscernUserPage()) {
-                    releaseRfid()
-                    resetNfc()
-                }
+//                releaseRfid()
+                resetNfc()
+            }
+
+            override fun turnOffNFC() {
+                releaseNfc()
             }
 
             override fun turnOnRFID() {
-                if (isDiscernUserPage()) {
-                    releaseNfc()
-                    resetRfid()
-                }
+                releaseNfc()
+//                resetRfid()
+            }
+
+            override fun turnOffRFID() {
+                releaseRfid()
             }
         })
     }
@@ -439,6 +468,7 @@ class MainActivity : BaseWebActivity() {
                         deviceInfoJson
                     )
                 }
+                btnQuit.visibility = if (url?.endsWith("index").orFalse()) View.VISIBLE else View.GONE
                 curUrl = url
                 if (!isDiscernUserPage()) {
                     releaseNfc()
@@ -468,16 +498,19 @@ class MainActivity : BaseWebActivity() {
     }
 
     override fun getWebLayout(): IWebLayout<*, *>? {
-        val smartRefreshWebLayout = SmartRefreshWebLayout(this)
-        val smartRefreshLayout = smartRefreshWebLayout.layout as SmartRefreshLayout
-        smartRefreshLayout.setOnRefreshListener {
-            agentWeb.urlLoader.reload()
-            smartRefreshLayout.postDelayed({
-                smartRefreshLayout.finishRefresh()
-            }, 2000)
+        return if (BuildConfig.DEBUG) {
+            val smartRefreshWebLayout = SmartRefreshWebLayout(this)
+            val smartRefreshLayout = smartRefreshWebLayout.layout as SmartRefreshLayout
+            smartRefreshLayout.setOnRefreshListener {
+                agentWeb.urlLoader.reload()
+                smartRefreshLayout.postDelayed({
+                    smartRefreshLayout.finishRefresh()
+                }, 2000)
+            }
+            smartRefreshWebLayout
+        } else {
+            null
         }
-        return smartRefreshWebLayout
-//        return null
     }
 
     override fun getPermissionInterceptor(): PermissionInterceptor? {
