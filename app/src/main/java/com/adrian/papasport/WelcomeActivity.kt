@@ -2,8 +2,8 @@ package com.adrian.papasport
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_welcome.*
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -15,7 +15,7 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        tvWelcome.postDelayed({
+        Handler().postDelayed({
             val intent = Intent(this@WelcomeActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
