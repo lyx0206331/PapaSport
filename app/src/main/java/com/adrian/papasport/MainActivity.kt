@@ -63,7 +63,9 @@ class MainActivity : BaseWebActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.title = ""
+        supportActionBar?.title = ""
+        supportActionBar?.subtitle = ""
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         toolbar.setBackgroundColor(Color.WHITE)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.navigationIcon = ContextCompat.getDrawable(this, R.mipmap.back)
