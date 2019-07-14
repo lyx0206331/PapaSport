@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.media.MediaPlayer
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.posapi.PosApi
@@ -35,6 +36,7 @@ import com.alibaba.fastjson.JSON
 import com.just.agentweb.*
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import kotlinx.android.synthetic.main.activity_base_web.*
+import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import java.util.*
 
@@ -59,14 +61,15 @@ class MainActivity : BaseWebActivity() {
     private var isPrintOpen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.title_bg_color)
+        }
         super.onCreate(savedInstanceState)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = ""
-        supportActionBar?.subtitle = ""
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        toolbar.setBackgroundColor(Color.WHITE)
+        toolbar.backgroundColorResource = R.color.title_bg_color
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.navigationIcon = ContextCompat.getDrawable(this, R.mipmap.back)
 
@@ -76,6 +79,9 @@ class MainActivity : BaseWebActivity() {
             agentWeb.jsAccessEntrace.quickCallJs(
                 "signOut"
             )
+        }
+        ibHome.onClick {
+            agentWeb.jsAccessEntrace.quickCallJs("linkToHome")
         }
 
 //        initNFC()
@@ -462,15 +468,26 @@ class MainActivity : BaseWebActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 logE(TAG, "onPageFinished. url: $url")
-                if (url?.endsWith("login").orFalse()) {
-                    val deviceInfoJson = JSON.toJSONString(DeviceInfo(PhoneUtils.getImeiNum()))
-                    logE(TAG, deviceInfoJson)
-                    agentWeb.jsAccessEntrace.quickCallJs(
-                        "getImei",
-                        deviceInfoJson
-                    )
+                when {
+                    url?.endsWith("login").orFalse() -> {
+                        val deviceInfoJson = JSON.toJSONString(DeviceInfo(PhoneUtils.getImeiNum()))
+                        logE(TAG, deviceInfoJson)
+                        agentWeb.jsAccessEntrace.quickCallJs(
+                            "getImei",
+                            deviceInfoJson
+                        )
+                        ibHome.visibility = View.GONE
+                        btnQuit.visibility = View.GONE
+                    }
+                    url?.endsWith("index").orFalse() -> {
+                        btnQuit.visibility = View.VISIBLE
+                        ibHome.visibility = View.GONE
+                    }
+                    else -> {
+                        btnQuit.visibility = View.GONE
+                        ibHome.visibility = View.VISIBLE
+                    }
                 }
-                btnQuit.visibility = if (url?.endsWith("index").orFalse()) View.VISIBLE else View.GONE
                 curUrl = url
                 if (!isDiscernUserPage()) {
                     releaseNfc()
@@ -533,8 +550,8 @@ class MainActivity : BaseWebActivity() {
 
     override fun getUrl(): String {
         //https://m.jd.com/
-//        return "http://pda.test.papasports.com.cn"
-        return "https://pda.papa.com.cn"
+        return "http://pda.test.papasports.com.cn"
+//        return "https://pda.papa.com.cn"
 //        return "http://192.168.1.12:8039"
     }
 

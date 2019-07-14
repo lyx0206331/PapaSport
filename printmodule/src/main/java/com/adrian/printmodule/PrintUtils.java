@@ -297,12 +297,12 @@ public class PrintUtils {
             PrintQueue.TextData payTitleData = mPrintQueue.new TextData();
             payTitleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
             payTitleData.addText(printInfo.getPayInfo().getFieldName());
-            mPrintQueue.addText(30, payTitleData);
+            mPrintQueue.addText(50, payTitleData);
 
             PrintQueue.TextData bodyData = mPrintQueue.new TextData();
             bodyData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
             bodyData.addText(printInfo.getPayInfo().getPrintContent());
-            mPrintQueue.addText(30, bodyData);
+            mPrintQueue.addText(50, bodyData);
         }
 
         if (printInfo.getTicketInfo() != null && printInfo.getTicketInfo().size() > 0) {
@@ -310,22 +310,27 @@ public class PrintUtils {
                     printInfo.getTicketInfo()) {
                 try {
 
+//                    // 二维码生成
+//                    Bitmap btMap = encode2dAsBitmap(qrInfo.getTicketNum(), 300, 300, 2);
+//
+//                    // 图片转成打印字节数组
+//                    byte[] printData = BitmapTools.bitmap2PrinterBytes(btMap);
+
+                    PrintQueue.TextData titleData = mPrintQueue.new TextData();
+                    titleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
+                    titleData.addText(qrInfo.getTicketName());
+                    mPrintQueue.addText(50, titleData);
+
+                    PrintQueue.TextData dividerData = mPrintQueue.new TextData();
+                    dividerData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
+                    dividerData.addText("\n     ----------------------\n");
+                    mPrintQueue.addText(50, dividerData);
+
                     // 二维码生成
                     Bitmap btMap = encode2dAsBitmap(qrInfo.getTicketNum(), 300, 300, 2);
 
                     // 图片转成打印字节数组
                     byte[] printData = BitmapTools.bitmap2PrinterBytes(btMap);
-
-                    PrintQueue.TextData titleData = mPrintQueue.new TextData();
-                    titleData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
-                    titleData.addText(qrInfo.getTicketName());
-                    mPrintQueue.addText(30, titleData);
-
-                    PrintQueue.TextData dividerData = mPrintQueue.new TextData();
-                    dividerData.addParam(PrintQueue.PARAM_ALIGN_LEFT);
-                    dividerData.addText("\n     ----------------------\n");
-                    mPrintQueue.addText(30, dividerData);
-
                     // 将打印数组添加到打印队列
                     mPrintQueue.addBmp(50, 50, btMap.getWidth(), btMap.getHeight(),
                             printData);
@@ -333,9 +338,9 @@ public class PrintUtils {
                     PrintQueue.TextData numData = mPrintQueue.new TextData();
                     numData.addParam(PrintQueue.PARAM_ALIGN_MIDDLE);
                     numData.addText("\n票号：" + qrInfo.getTicketNum());
-                    mPrintQueue.addText(30, numData);
+                    mPrintQueue.addText(50, numData);
 //
-                    // 打印6个空行，使二维码显示到打印头外面
+                    // 打印3个空行，使二维码显示到打印头外面
                     mPrintQueue.addText(50, "\n\n\n".getBytes("GBK"));
 
                 } catch (UnsupportedEncodingException e) {
@@ -448,6 +453,35 @@ public class PrintUtils {
         // 打印队列开始
         mPrintQueue.printStart();
 
+    }
+
+    private void saveBmp2Sdcard(Bitmap bmp) {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/二维码_" + System.currentTimeMillis() + ".png";
+        File f = new File(path);
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(context, "在保存图片时出错：" + e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+            Toast.makeText(context, "二维码成功保存到：" + path, Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void releaseDevice() {

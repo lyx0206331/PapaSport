@@ -8,8 +8,8 @@ ext {
             applicationId               : "com.adrian.papasport",
             minSdkVersion               : 19,
             targetSdkVersion            : 22,
-            versionCode                 : 3,
-            versionName                 : "0.0.1"
+            versionCode                 : 5,
+            versionName                 : "0.0.2"
     ]
 
     def KOTLIN_ANKO_VERSION = "0.10.8"
