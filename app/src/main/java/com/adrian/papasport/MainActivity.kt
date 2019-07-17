@@ -550,7 +550,11 @@ class MainActivity : BaseWebActivity() {
 
     override fun getUrl(): String {
         //https://m.jd.com/
-        return "http://pda.test.papasports.com.cn"
+        return if (BuildConfig.DEBUG) {
+            "http://pda.test.papasports.com.cn"
+        } else {
+            "https://pda.papa.com.cn"
+        }
 //        return "https://pda.papa.com.cn"
 //        return "http://192.168.1.12:8039"
     }
