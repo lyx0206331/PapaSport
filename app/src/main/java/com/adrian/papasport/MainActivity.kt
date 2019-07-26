@@ -1,5 +1,6 @@
 package com.adrian.papasport
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
@@ -73,8 +74,6 @@ class MainActivity : BaseWebActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.navigationIcon = ContextCompat.getDrawable(this, R.mipmap.back)
 
-//        toolbar.visibility = View.GONE
-
         btnQuit.onClick {
             agentWeb.jsAccessEntrace.quickCallJs(
                 "signOut"
@@ -84,9 +83,7 @@ class MainActivity : BaseWebActivity() {
             agentWeb.jsAccessEntrace.quickCallJs("linkToHome")
         }
 
-//        initNFC()
-//        initRFID()
-        initScanPrint()
+//        initScanPrint()
     }
 
     /**
@@ -246,7 +243,8 @@ class MainActivity : BaseWebActivity() {
 
     private fun resetPrint() {
         if (!isPrintOpen) {
-            scanPrintUtils?.openDevice()
+            initScanPrint()
+            openScanPrintUtils()
             isPrintOpen = true
         }
     }
@@ -267,6 +265,10 @@ class MainActivity : BaseWebActivity() {
 //            rfidUtils.resume()
 //        }
 
+//        openScanPrintUtils()
+    }
+
+    private fun openScanPrintUtils() {
         // 必须延迟一秒，否则将会出现第一次扫描和打印延迟的现象
         Handler().postDelayed({
             // 打开GPIO，给扫描头上电
@@ -323,8 +325,24 @@ class MainActivity : BaseWebActivity() {
 
     override fun onDestroy() {
 //        rfidUtils.release()
-        scanPrintUtils?.release()
+//        scanPrintUtils?.release()
         super.onDestroy()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 1) {
+                data?.apply {
+                    val content = getStringExtra("rfid_data")
+                    logE(TAG, content)
+                    agentWeb.jsAccessEntrace.quickCallJs(
+                        "andriodCallH5",
+                        content
+                    )
+                }
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -368,28 +386,6 @@ class MainActivity : BaseWebActivity() {
         return AndroidInterface(this, agentWeb, object : AndroidInterface.IJsListener {
 
             override fun printMsg(msg: String) {
-//                val printModel = JSON.parseObject(msg, BasePrintModel::class.java)
-//                when (printModel.type) {
-//                    0 -> showToastShort(printModel.content)
-//                    //门票
-//                    1 -> {
-//                        scanPrintUtils?.printQrCodeTicket(
-//                            JSON.parseObject(
-//                                printModel.content,
-//                                QrCodeTicketInfo::class.java
-//                            )
-//                        )
-//                    }
-//                    //支付凭证
-//                    2 -> {
-//                        scanPrintUtils?.printPaymentVoucher(
-//                            JSON.parseObject(
-//                                printModel.content,
-//                                PaymentVoucherInfo::class.java
-//                            )
-//                        )
-//                    }
-//                }
                 try {
 //                    val test = "{\"payInfo\":{\"consumeAddr\":\"啪啪运动第一运动公园\",\"consumeType\":\"门票\",\"fieldName\":\"啪啪运动第一运动公园\",\"printTime\":\"\",\"total\":\"0.03\",\"offer\":\"0.03\",\"payType\":\"现金\",\"payTime\":\"2019-07-06 16:39:43\",\"ticketList\":[{\"count\":\"1\",\"name\":\"游泳日票\",\"price\":\"0.01\"},{\"count\":\"1\",\"name\":\"大熊测试\",\"price\":\"0.02\"}],\"remark\":\"\"},\"ticketInfo\":[]}"
                     val printInfo = JSON.parseObject(msg, PrintInfo::class.java)
@@ -405,8 +401,10 @@ class MainActivity : BaseWebActivity() {
             }
 
             override fun turnOnNFC() {
-//                releaseRfid()
+                releaseRfid()
                 resetNfc()
+//                releasePrint()
+//                resetPrint()
             }
 
             override fun turnOffNFC() {
@@ -415,11 +413,12 @@ class MainActivity : BaseWebActivity() {
 
             override fun turnOnRFID() {
                 releaseNfc()
-//                resetRfid()
+                resetRfid()
+//                startActivityForResult(Intent(this@MainActivity, RFIDActivity::class.java), 1)
             }
 
             override fun turnOffRFID() {
-                releaseRfid()
+//                releaseRfid()
             }
         })
     }
@@ -476,14 +475,17 @@ class MainActivity : BaseWebActivity() {
                             "getImei",
                             deviceInfoJson
                         )
+                        toolbar.visibility = View.GONE
                         ibHome.visibility = View.GONE
                         btnQuit.visibility = View.GONE
                     }
                     url?.endsWith("index").orFalse() -> {
+                        toolbar.visibility = View.VISIBLE
                         btnQuit.visibility = View.VISIBLE
                         ibHome.visibility = View.GONE
                     }
                     else -> {
+                        toolbar.visibility = View.VISIBLE
                         btnQuit.visibility = View.GONE
                         ibHome.visibility = View.VISIBLE
                     }
