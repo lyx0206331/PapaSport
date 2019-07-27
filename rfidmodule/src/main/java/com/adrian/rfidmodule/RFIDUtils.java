@@ -106,6 +106,7 @@ public class RFIDUtils {
 
                 if (ret1 == 0) {
                     Toast.makeText(context, "设置成功", Toast.LENGTH_SHORT).show();
+                    isOpen = true;
                 } else {
                     Toast.makeText(context, "设置失败", Toast.LENGTH_SHORT).show();
                 }

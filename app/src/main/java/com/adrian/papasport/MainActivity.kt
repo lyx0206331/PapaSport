@@ -161,7 +161,7 @@ class MainActivity : BaseWebActivity() {
             }
         })
 
-        rfidUtils?.isOpen = true
+//        rfidUtils?.isOpen = true
     }
 
     /**
