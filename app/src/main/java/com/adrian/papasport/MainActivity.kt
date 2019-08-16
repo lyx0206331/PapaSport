@@ -43,18 +43,22 @@ import java.util.*
 
 class MainActivity : BaseWebActivity() {
 
+    /** nfc适配器 */
     private var nfcAdapter: NfcAdapter? = null
     private var mPendingIntent: PendingIntent? = null
     private var ndefPushMessage: NdefMessage? = null
     private lateinit var nfcDialog: AlertDialog
 
+    /** nfc工具类,识别会员卡 */
     private var nfcUtils: NFCUtils? = null
     private var curUrl: String? = null
     private var pageTag: String = "memberSearch"
 
+    /** rfid工具类，识别身份证 */
     private var rfidUtils: RFIDUtils? = null
     private val player by lazy { MediaPlayer.create(this, R.raw.success) }
 
+    /** 扫描打印工具类 */
     private var scanPrintUtils: PrintUtils? = null
 
     private var isNfcOpen = false
