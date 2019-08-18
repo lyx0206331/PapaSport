@@ -87,7 +87,7 @@ class MainActivity : BaseWebActivity() {
             agentWeb.jsAccessEntrace.quickCallJs("linkToHome")
         }
 
-//        initScanPrint()
+        initScanPrint()
     }
 
     /**
@@ -329,7 +329,7 @@ class MainActivity : BaseWebActivity() {
 
     override fun onDestroy() {
 //        rfidUtils.release()
-//        scanPrintUtils?.release()
+        scanPrintUtils?.release()
         super.onDestroy()
     }
 
@@ -405,7 +405,7 @@ class MainActivity : BaseWebActivity() {
             }
 
             override fun turnOnNFC() {
-                releaseRfid()
+//                releaseRfid()
                 resetNfc()
 //                releasePrint()
 //                resetPrint()
@@ -416,8 +416,8 @@ class MainActivity : BaseWebActivity() {
             }
 
             override fun turnOnRFID() {
-                releaseNfc()
-                resetRfid()
+//                releaseNfc()
+//                resetRfid()
 //                startActivityForResult(Intent(this@MainActivity, RFIDActivity::class.java), 1)
             }
 
