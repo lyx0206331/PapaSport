@@ -17,6 +17,13 @@ android {
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
 
+//        flavorDimensions "official"
+        if (!rootProject.ext.isModule) {
+            ndk {
+                abiFilters "armeabi"//可以适当补填其他
+            }
+        }
+
     }
 
     buildTypes {
@@ -37,6 +44,7 @@ android {
                     exclude '*module'
                 }
             }
+            jniLibs.srcDirs = ['libs']
         }
     }
 

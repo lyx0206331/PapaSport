@@ -103,7 +103,7 @@ class MainActivity : BaseWebActivity() {
                 val ticketNum = NFCTagInfo(msg.orEmpty(), "").toJsonString()
                 logE(TAG, ticketNum)
                 agentWeb.jsAccessEntrace.quickCallJs(
-                    "andriodGetCode", ticketNum
+                    "androidGetCode", ticketNum
                 )
                 player.start()
             }
@@ -144,7 +144,7 @@ class MainActivity : BaseWebActivity() {
                 val jsonStr = idCardInfo?.toJsonString().orEmpty()
                 logE(TAG, jsonStr)
                 agentWeb.jsAccessEntrace.quickCallJs(
-                    "andriodCallH5",
+                    "androidCallH5",
                     jsonStr
                 )
                 player.start()
@@ -181,7 +181,7 @@ class MainActivity : BaseWebActivity() {
                 val jsonStr = NFCTagInfo("$decTagId", "$reversedId").toJsonString()
                 logE(TAG, jsonStr)
                 agentWeb.jsAccessEntrace.quickCallJs(
-                    "andriodCallH5",
+                    "androidCallH5",
                     jsonStr
                 )
             }
@@ -341,7 +341,7 @@ class MainActivity : BaseWebActivity() {
                     val content = getStringExtra("rfid_data")
                     logE(TAG, content)
                     agentWeb.jsAccessEntrace.quickCallJs(
-                        "andriodCallH5",
+                        "androidCallH5",
                         content
                     )
                 }
@@ -557,7 +557,7 @@ class MainActivity : BaseWebActivity() {
     override fun getUrl(): String {
         //https://m.jd.com/
         return if (BuildConfig.DEBUG) {
-            "http://pda.test.papasports.com.cn"
+            "https://demo-handtest.wesais.cn"
         } else {
             "https://pda.papa.com.cn"
         }

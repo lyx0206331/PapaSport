@@ -16,6 +16,10 @@ android {
 
         flavorDimensions "default"
         multiDexEnabled true
+
+        ndk {
+            abiFilters "armeabi"//可以适当补填其他
+        }
     }
 
     signingConfigs {
@@ -42,7 +46,7 @@ android {
 
             applicationVariants.all { variant ->
                 variant.outputs.all { output ->
-                    def fileName = "PapaSports_v${defaultConfig.versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+                    def fileName = "PapaSports_v${defaultConfig.versionName}_${releaseTime()}.apk"
                     outputFileName = fileName
                 }
             }
@@ -60,18 +64,6 @@ android {
         }
     }
 
-    productFlavors {
-
-        official {}
-//        wandoujia {}
-//        _360 {}
-//        yingyongbao {}
-//        xiaomi {}
-//        baidu {}
-//        huawei {}
-//        jifeng {}
-//        meizu {}
-    }
 
     lintOptions {
         checkReleaseBuilds false
