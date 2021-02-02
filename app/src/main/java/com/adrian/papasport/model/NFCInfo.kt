@@ -11,7 +11,7 @@ class NFCTagInfo(val decTagId: String, val reversedId: String) {
 
     fun toJsonString(): String {
         val jsonObj = JSONObject()
-        jsonObj.put("idNumber", decTagId)
+        jsonObj.put("card_num", decTagId)
         jsonObj.put("reversedId", reversedId)
         return jsonObj.toString()
     }

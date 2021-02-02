@@ -103,7 +103,7 @@ class MainActivity : BaseWebActivity() {
                 val ticketNum = NFCTagInfo(msg.orEmpty(), "").toJsonString()
                 logE(TAG, ticketNum)
                 agentWeb.jsAccessEntrace.quickCallJs(
-                    "androidGetCode", ticketNum
+                    "androidCallH5", ticketNum
                 )
                 player.start()
             }
@@ -144,7 +144,7 @@ class MainActivity : BaseWebActivity() {
                 val jsonStr = idCardInfo?.toJsonString().orEmpty()
                 logE(TAG, jsonStr)
                 agentWeb.jsAccessEntrace.quickCallJs(
-                    "androidCallH5",
+                    "andriodGetCode",
                     jsonStr
                 )
                 player.start()
@@ -181,7 +181,7 @@ class MainActivity : BaseWebActivity() {
                 val jsonStr = NFCTagInfo("$decTagId", "$reversedId").toJsonString()
                 logE(TAG, jsonStr)
                 agentWeb.jsAccessEntrace.quickCallJs(
-                    "androidCallH5",
+                    "androidGetCard",
                     jsonStr
                 )
             }
